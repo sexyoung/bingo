@@ -1,23 +1,31 @@
-import logo from './logo.svg';
-import './App.css';
+import qrcode from 'qrcode';
+import { useEffect, createRef } from "react";
+import socketIOClient from "socket.io-client";
+
+import style from './App.module.scss';
 
 function App() {
+
+  const canvas = createRef();
+
+  useEffect(() => {
+    console.log(canvas.current);
+
+    qrcode.toCanvas(canvas.current, 'http://localhost:3000/', function (error) {
+      if (error) console.error(error)
+      console.log('success!');
+    });
+
+    const socket = socketIOClient('http://127.0.0.1:4001');
+    socket.on("FromAPI", data => {
+      console.log(data);
+    });
+  }, []);
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div className={style.App}>
+      hello2
+      <canvas ref={canvas} id="canvas"></canvas>
     </div>
   );
 }

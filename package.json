@@ -1,20 +1,28 @@
 {
   "name": "bingo",
   "version": "0.1.0",
+  "type": "module",
   "private": true,
   "dependencies": {
     "@testing-library/jest-dom": "^5.11.4",
     "@testing-library/react": "^11.1.0",
     "@testing-library/user-event": "^12.1.10",
+    "babel-cli": "^6.26.0",
+    "express": "^4.17.1",
+    "node-sass": "4",
+    "qrcode": "^1.4.4",
     "react": "^17.0.1",
     "react-dom": "^17.0.1",
     "react-scripts": "4.0.1",
+    "socket.io": "^3.0.3",
+    "socket.io-client": "^3.0.3",
     "web-vitals": "^0.2.4"
   },
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
+    "server": "babel-node server/index",
     "eject": "react-scripts eject"
   },
   "eslintConfig": {
@@ -34,5 +42,9 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "babel-core": "^6.26.3",
+    "babel-preset-env": "^1.7.0"
   }
 }
