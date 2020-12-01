@@ -1,21 +1,17 @@
-import qrcode from 'qrcode';
-import { useEffect, createRef } from "react";
+import { useEffect } from "react";
 import socketIOClient from "socket.io-client";
+import {
+  Route,
+  Switch,
+  HashRouter,
+} from "react-router-dom";
 
+import * as Page from "pages";
 import style from './App.module.scss';
 
 function App() {
 
-  const canvas = createRef();
-
   useEffect(() => {
-    console.log(canvas.current);
-
-    qrcode.toCanvas(canvas.current, 'http://localhost:3000/', function (error) {
-      if (error) console.error(error)
-      console.log('success!');
-    });
-
     const socket = socketIOClient('http://127.0.0.1:4001');
     socket.on("FromAPI", data => {
       console.log(data);
@@ -24,8 +20,15 @@ function App() {
 
   return (
     <div className={style.App}>
-      hello2
-      <canvas ref={canvas} id="canvas"></canvas>
+      <HashRouter>
+        <Switch>
+          <Route exact path="/"><Page.HomePage /></Route>
+          <Route exact path="/room/:roomID"><Page.RoomPage /></Route>
+          <Route exact path="/join/:roomID"><Page.JoinPage /></Route>
+          <Route exact path="/game/:roomID"><Page.GamePage /></Route>
+          <Route path="*"><Page.NotFoundPage /></Route>
+        </Switch>
+      </HashRouter>
     </div>
   );
 }

@@ -6,7 +6,11 @@ const app = express();
 const server = http.createServer(app);
 const io = socketIO(server, {
   cors: {
-    origin: "http://localhost:3000",
+    origin: '*',
+    // origin: [
+    //   "http://localhost:3000",
+    //   "http://172.20.10.2:3000",
+    // ],
   }
 });
 
