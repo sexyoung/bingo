@@ -20,9 +20,18 @@ app.get('/', (req, res) => {
 
 io.on('connection', (socket) => {
   console.log('a user connected');
-  setInterval(() => {
-    socket.emit("FromAPI", socket.id);
-  }, 2000);
+  socket.emit("connected", socket.rooms);
+
+  socket.on('create', room => {
+    socket.join(room);
+    console.log('create and join room', socket.id);
+  });
+
+  socket.on('joinRequest', (room, userID) => {
+    socket.join(room);
+    console.log('join!!!', userID);
+    io.to(room).emit('joinResponse', userID);
+  });
 });
 
 server.listen(4001, () => {

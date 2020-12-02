@@ -1,13 +1,19 @@
+import { useEffect } from "react";
 import {
   Route,
   Switch,
   HashRouter,
 } from "react-router-dom";
 
+import { User } from "class";
 import * as Page from "pages";
 import style from './App.module.scss';
 
 function App() {
+
+  useEffect(() => {
+    new User();
+  }, []);
 
   return (
     <div className={style.App}>
@@ -15,9 +21,6 @@ function App() {
         <Switch>
           <Route exact path="/"><Page.HomePage /></Route>
           <Route path="/:roomID"><Page.RoomPage /></Route>
-          {/* <Route exact path="/new/:roomID"><Page.NewPage /></Route>
-          <Route exact path="/join/:roomID"><Page.JoinPage /></Route>
-          <Route exact path="/game/:roomID"><Page.GamePage /></Route> */}
           <Route path="*"><Page.NotFoundPage /></Route>
         </Switch>
       </HashRouter>
