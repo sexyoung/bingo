@@ -21,8 +21,8 @@ app.get('/', (req, res) => {
 io.on('connection', (socket) => {
   console.log('a user connected');
   setInterval(() => {
-    socket.emit("FromAPI", new Date().toLocaleTimeString());
-  }, 1000);
+    socket.emit("FromAPI", socket.id);
+  }, 2000);
 });
 
 server.listen(4001, () => {

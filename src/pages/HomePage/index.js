@@ -6,7 +6,7 @@ export function HomePage() {
   return (
     <div>
       <h2>HomePage</h2>
-      <Link to={`/room/abc`}>Create</Link>
+      <Link to={`/abc/new`}>Create</Link>
       <div>
         should generate random string
       </div>
