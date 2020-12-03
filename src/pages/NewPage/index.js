@@ -2,7 +2,9 @@ import qrcode from 'qrcode';
 import { useParams } from "react-router-dom";
 import { useLayoutEffect, createRef, useState } from "react";
 
-export function NewPage({ socket }) {
+import { SocketEvent } from "const";
+
+export function NewPage({ socket, user }) {
 
   const canvas = createRef();
   const { roomID } = useParams();
@@ -15,11 +17,8 @@ export function NewPage({ socket }) {
     });
 
     socket.emit('create', roomID);
-    console.log('create');
-
-    socket.on('joinResponse', userID => {
-      console.log('join!', userID);
-      setList(list => [userID, ...list]);
+    socket.on(SocketEvent.Room.PlayerUpdate, socketList => {
+      setList(socketList);
     });
   }, []);
 

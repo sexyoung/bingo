@@ -2,6 +2,8 @@ import http from 'http';
 import express from 'express';
 import socketIO from 'socket.io';
 
+import { SocketEvent } from "../src/const";
+
 const app = express();
 const server = http.createServer(app);
 const io = socketIO(server, {
@@ -22,15 +24,23 @@ io.on('connection', (socket) => {
   console.log('a user connected');
   socket.emit("connected", socket.rooms);
 
-  socket.on('create', room => {
+  socket.on('create', (room) => {
     socket.join(room);
-    console.log('create and join room', socket.id);
+    socket.leave(socket.id);
+    console.log([...io.sockets.adapter.rooms.get('abc')]);
+    io.to(room).emit(SocketEvent.Room.PlayerUpdate, [...io.sockets.adapter.rooms.get('abc')]);
   });
 
-  socket.on('joinRequest', (room, userID) => {
+  socket.on(SocketEvent.Room.PlayerJoin, (room, userID) => {
     socket.join(room);
-    console.log('join!!!', userID);
-    io.to(room).emit('joinResponse', userID);
+    socket.leave(socket.id);
+    console.log([...io.sockets.adapter.rooms.get('abc')]);
+    io.to(room).emit(SocketEvent.Room.PlayerUpdate, [...io.sockets.adapter.rooms.get('abc')]);
+  });
+
+  socket.on('disconnect', reson => {
+    console.log('==== disconnect ====', socket.id);
+    console.log('reson', reson);
   });
 });
 

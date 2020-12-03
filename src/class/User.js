@@ -19,11 +19,10 @@ export const getGUID = (len = 32) => {
 
 export class User {
   constructor() {
-    const user = localStorage.getItem('bingoUser');
+    let user = localStorage.getItem('bingoUser');
     if(!user) {
-      localStorage.setItem('bingoUser', JSON.stringify({
-        id: getGUID()
-      }));
+      user = JSON.stringify({id: getGUID()});
+      localStorage.setItem('bingoUser', user);
     }
     const attr = JSON.parse(user);
     for (const key in attr) {
