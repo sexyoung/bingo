@@ -1,12 +1,20 @@
 import {
-  Link,
+  useHistory,
 } from "react-router-dom";
 
+import { getRandomChar } from "utils";
+
 export function HomePage() {
+  const history = useHistory();
+
+  function handleClick() {
+    history.push(`/${getRandomChar(4)}/join`);
+  }
+
   return (
     <div>
       <h2>HomePage</h2>
-      <Link to={`/abc/new`}>Create</Link>
+      <button onClick={handleClick}>Create</button>
       <div>
         should generate random string
       </div>

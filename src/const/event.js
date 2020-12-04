@@ -1,6 +1,6 @@
 export const SocketEvent = {
   Room: {
-    PlayerJoin: 'PlayerJoin',
-    PlayerUpdate: 'PlayerUpdate',
+    PlayerJoin: 'RoomPlayerJoin',
+    PlayerUpdate: 'RoomPlayerUpdate',
   }
 };

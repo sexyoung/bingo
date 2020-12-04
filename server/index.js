@@ -2,7 +2,13 @@ import http from 'http';
 import express from 'express';
 import socketIO from 'socket.io';
 
-import { SocketEvent } from "../src/const";
+import {
+  PlayerJoin,
+} from "./RoomEvent";
+
+import {
+  Disconnect,
+} from "./SocketEvent";
 
 const app = express();
 const server = http.createServer(app);
@@ -20,28 +26,13 @@ app.get('/', (req, res) => {
   res.sendFile(__dirname + '/index.html');
 });
 
-io.on('connection', (socket) => {
-  console.log('a user connected');
+io.on('connection', socket => {
+  console.log(`user connect: ${socket.id}`);
   socket.emit("connected", socket.rooms);
 
-  socket.on('create', (room) => {
-    socket.join(room);
-    socket.leave(socket.id);
-    console.log([...io.sockets.adapter.rooms.get('abc')]);
-    io.to(room).emit(SocketEvent.Room.PlayerUpdate, [...io.sockets.adapter.rooms.get('abc')]);
-  });
+  PlayerJoin({ io, socket });
+  Disconnect({ io, socket });
 
-  socket.on(SocketEvent.Room.PlayerJoin, (room, userID) => {
-    socket.join(room);
-    socket.leave(socket.id);
-    console.log([...io.sockets.adapter.rooms.get('abc')]);
-    io.to(room).emit(SocketEvent.Room.PlayerUpdate, [...io.sockets.adapter.rooms.get('abc')]);
-  });
-
-  socket.on('disconnect', reson => {
-    console.log('==== disconnect ====', socket.id);
-    console.log('reson', reson);
-  });
 });
 
 server.listen(4001, () => {

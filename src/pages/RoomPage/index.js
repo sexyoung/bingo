@@ -5,21 +5,16 @@ import {
 import { useEffect, useState } from "react";
 import socketIOClient from "socket.io-client";
 
-import { useParams, useRouteMatch } from "react-router-dom";
+import { useRouteMatch } from "react-router-dom";
 
 import { User } from "class";
 import * as Page from "pages";
 
 const user = new User();
 
-const socket = socketIOClient(process.env.REACT_APP_SOCKET_URL);
-socket.on("connected", data => {
-  console.log('socket connected');
-});
-
 export function RoomPage() {
-  const { roomID } = useParams();
-  const { path, url } = useRouteMatch();
+  const { path } = useRouteMatch();
+  const [ socket ] = useState(socketIOClient(process.env.REACT_APP_SOCKET_URL));
 
   useEffect(() => {
     return () => socket.close();
@@ -28,8 +23,7 @@ export function RoomPage() {
   return (
     <div classs="RoomPage">
       <Switch>
-        <Route path={`${path}/new`}><Page.NewPage {...{ user, socket }} /></Route>
-        <Route path={`${path}/join`}><Page.JoinPage {...{ user, socket }}  /></Route>
+        <Route path={`${path}/join`}><Page.JoinPage {...{ user, socket }} /></Route>
         <Route path={`${path}`}><Page.GamePage {...{ user, socket }}  /></Route>
         <Route path="*"><Page.NotFoundPage /></Route>
       </Switch>
