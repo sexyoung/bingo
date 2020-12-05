@@ -11,3 +11,9 @@ export const PlayerJoin = ({ io, socket }) => {
     }
   });
 };
+
+export const MessageSend = ({ io, socket }) => {
+  socket.on(SocketEvent.Room.MessageSend, (room, message) => {
+    io.to(room).emit(SocketEvent.Room.MessageUpdate, message);
+  });
+};

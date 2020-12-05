@@ -4,6 +4,7 @@ import socketIO from 'socket.io';
 
 import {
   PlayerJoin,
+  MessageSend,
 } from "./RoomEvent";
 
 import {
@@ -31,6 +32,7 @@ io.on('connection', socket => {
   socket.emit("connected", socket.rooms);
 
   PlayerJoin({ io, socket });
+  MessageSend({ io, socket });
   Disconnect({ io, socket });
 
 });

@@ -1,7 +1,8 @@
+import { SocketEvent } from "const";
 import { getRandomChar } from "utils";
 
 export class User {
-  constructor() {
+  constructor(socket) {
     let user = localStorage.getItem('bingoUser');
     if(!user) {
       user = JSON.stringify({id: this.getGUID()});
@@ -11,6 +12,7 @@ export class User {
     for (const key in attr) {
       this[key] = attr[key];
     }
+    this.socket = socket;
   }
 
   getGUID(len = 32) {
@@ -20,5 +22,18 @@ export class User {
       if(i % 8 === 7) result += '-';
     }
     return result.slice(0, result.length - 1);
+  }
+
+  join(room) {
+    this.room = room;
+    this.socket.emit(SocketEvent.Room.PlayerJoin, room);
+  }
+
+  send(message) {
+    this.socket.emit(SocketEvent.Room.MessageSend, this.room, message);
+  }
+
+  leave() {
+    this.socket.close();
   }
 }
