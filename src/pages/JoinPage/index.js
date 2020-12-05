@@ -6,6 +6,7 @@ import { SocketEvent } from "const";
 
 export function JoinPage({ user }) {
 
+  const nameDOM = createRef();
   const inputDOM = createRef();
   const { room } = useParams();
   const canvasDOM = createRef();
@@ -18,12 +19,10 @@ export function JoinPage({ user }) {
       console.log('QR success!');
     });
 
-    user.socket.on("connected", data => {
-      console.log('socket connected', data);
-      user.join(room);
-    });
+    user.join(room);
 
     user.socket.on(SocketEvent.Room.PlayerUpdate, socketList => {
+      console.warn(socketList);
       setUserList(socketList);
     });
 
@@ -41,19 +40,29 @@ export function JoinPage({ user }) {
     inputDOM.current.value = '';
   };
 
+  const handleRename = e => {
+    e.preventDefault();
+    user.changeName(nameDOM.current.value);
+  };
+
   return (
     <div>
-      <h2>JoinPage</h2>
+      <h3>JoinPage</h3>
+      <div>{`${location.origin}/#/${room}/join`}</div>
+      <strong>name: </strong>
+      <form onSubmit={handleRename}>
+        <input type="text" defaultValue={user.name} ref={nameDOM} />
+        <button>rename</button>
+      </form>
       {userList.map(user =>
-        <div key={user}>{user}</div>
+        <div key={user.id}>{user.name}</div>
       )}
-      <h3>{`${location.origin}/#/${room}/join`}</h3>
       <form onSubmit={handleSubmit}>
         <input type="text" ref={inputDOM} />
       </form>
       <div>
-        {chatHistory.map((message, i) =>
-          <div key={i}>{message}</div>
+        {chatHistory.map((msg, i) =>
+          <div key={i}>{msg.sender}: {msg.text}</div>
         )}
       </div>
       <canvas ref={canvasDOM} id="canvas" />

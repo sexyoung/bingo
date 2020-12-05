@@ -3,6 +3,10 @@ import express from 'express';
 import socketIO from 'socket.io';
 
 import {
+  ChangeName,
+} from "./UserEvent";
+
+import {
   PlayerJoin,
   MessageSend,
 } from "./RoomEvent";
@@ -29,9 +33,10 @@ app.get('/', (req, res) => {
 
 io.on('connection', socket => {
   console.log(`user connect: ${socket.id}`);
-  socket.emit("connected", socket.rooms);
+  socket.emit("connected", socket.id);
 
   PlayerJoin({ io, socket });
+  ChangeName({ io, socket });
   MessageSend({ io, socket });
   Disconnect({ io, socket });
 

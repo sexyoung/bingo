@@ -4,5 +4,8 @@ export const SocketEvent = {
     PlayerUpdate: 'RoomPlayerUpdate',
     MessageSend: 'MessageSend',
     MessageUpdate: 'MessageUpdate',
+  },
+  User: {
+    ChangeName: 'UserChangeName',
   }
 };
