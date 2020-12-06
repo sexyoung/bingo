@@ -1,5 +1,5 @@
 import qrcode from 'qrcode';
-import { useParams } from "react-router-dom";
+import { useParams, useHistory } from "react-router-dom";
 import { useLayoutEffect, createRef, useState } from "react";
 
 import { SocketEvent } from "const";
@@ -8,6 +8,7 @@ export function JoinPage({ user }) {
 
   const nameDOM = createRef();
   const inputDOM = createRef();
+  const history = useHistory();
   const { room } = useParams();
   const canvasDOM = createRef();
   const [userList, setUserList] = useState([]);
@@ -20,6 +21,11 @@ export function JoinPage({ user }) {
     });
 
     user.join(room);
+
+    user.socket.on(SocketEvent.Room.Denied, () => {
+      user.leave();
+      history.push('/denied');
+    });
 
     user.socket.on(SocketEvent.Room.PlayerUpdate, socketList => {
       console.warn(socketList);
@@ -48,9 +54,8 @@ export function JoinPage({ user }) {
   return (
     <div>
       <h3>JoinPage</h3>
-      <div>{`${location.origin}/#/${room}/join`}</div>
-      <strong>name: </strong>
       <form onSubmit={handleRename}>
+        <strong>name: </strong>
         <input type="text" defaultValue={user.name} ref={nameDOM} />
         <button>rename</button>
       </form>
@@ -66,6 +71,7 @@ export function JoinPage({ user }) {
         )}
       </div>
       <canvas ref={canvasDOM} id="canvas" />
+      <div>{`${location.origin}/#/${room}/join`}</div>
     </div>
   );
 }

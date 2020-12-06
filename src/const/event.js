@@ -1,5 +1,6 @@
 export const SocketEvent = {
   Room: {
+    Denied: 'RoomDenied',
     PlayerJoin: 'RoomPlayerJoin',
     PlayerUpdate: 'RoomPlayerUpdate',
     MessageSend: 'MessageSend',

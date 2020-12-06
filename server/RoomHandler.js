@@ -5,6 +5,14 @@ import { Room } from './Room';
 
 export const RoomHandler = ({ io, socket }) => {
   socket.on(SocketEvent.Room.PlayerJoin, (room, user) => {
+
+    // 先檢查這個 id 是否有存在，有的話就不新增
+    if(User.getByID(user.id)) {
+      return io.to(socket.id).emit(
+        SocketEvent.Room.Denied
+      );
+    }
+
     socket.join(room);
     socket.leave(socket.id);
     User.add(socket.id, user);
