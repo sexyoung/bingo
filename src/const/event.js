@@ -3,8 +3,11 @@ export const SocketEvent = {
     Denied: 'RoomDenied',
     PlayerJoin: 'RoomPlayerJoin',
     PlayerUpdate: 'RoomPlayerUpdate',
-    MessageSend: 'MessageSend',
-    MessageUpdate: 'MessageUpdate',
+    UpdateProcess: 'RoomUpdateProcess',
+    MessageSend: 'RoomMessageSend',
+    MessageUpdate: 'RoomMessageUpdate',
+    StartGame: 'RoomStartGame',
+    TriggerStartGame: 'RoomTriggerStartGame',
   },
   User: {
     ChangeName: 'UserChangeName',

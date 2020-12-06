@@ -30,4 +30,17 @@ export const RoomHandler = ({ io, socket }) => {
       text: message,
     });
   });
+
+  socket.on(SocketEvent.Room.UpdateProcess, (room, percentage) => {
+    User.get(socket.id).percentage = percentage;
+    Room.updatePlayer({
+      io,
+      id: room,
+      sockets: [...io.sockets.adapter.rooms.get(room)]
+    });
+  });
+
+  socket.on(SocketEvent.Room.TriggerStartGame, room => {
+    io.in(room).emit(SocketEvent.Room.StartGame);
+  });
 };

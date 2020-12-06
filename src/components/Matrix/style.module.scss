@@ -1,0 +1,16 @@
+.BingoMatrix {
+  width: 250px;
+  background-color: #ff0;
+  .box {
+    width: 50px;
+    height: 50px;;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;;
+    &:hover {
+      border-radius: 3px;
+      background-color: #cc0;
+    }
+  }
+}

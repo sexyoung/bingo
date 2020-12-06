@@ -22,7 +22,7 @@ export function RoomPage() {
     <div classs="RoomPage">
       <Switch>
         <Route path={`${path}/join`}><Page.JoinPage {...{ user }} /></Route>
-        <Route path={`${path}`}><Page.GamePage {...{ user }}  /></Route>
+        <Route path={`${path}/game`}><Page.GamePage {...{ user }}  /></Route>
         <Route path="*"><Page.NotFoundPage /></Route>
       </Switch>
     </div>
