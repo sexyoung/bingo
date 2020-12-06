@@ -2,17 +2,10 @@ import http from 'http';
 import express from 'express';
 import socketIO from 'socket.io';
 
-import {
-  UserHandler,
-} from "./UserHandler";
-
-import {
-  RoomHandler,
-} from "./RoomHandler";
-
-import {
-  SocketHandler,
-} from "./SocketHandler";
+import { UserHandler } from "./UserHandler";
+import { RoomHandler } from "./RoomHandler";
+import { GameHandler } from "./GameHandler";
+import { SocketHandler } from "./SocketHandler";
 
 const app = express();
 const server = http.createServer(app);
@@ -36,6 +29,7 @@ io.on('connection', socket => {
 
   UserHandler({ io, socket });
   RoomHandler({ io, socket });
+  GameHandler({ io, socket });
   SocketHandler({ io, socket });
 
 });

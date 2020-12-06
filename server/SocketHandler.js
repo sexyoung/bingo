@@ -3,7 +3,7 @@ import { Room } from './Room';
 
 export const SocketHandler = ({ io, socket }) => {
   socket.on('disconnect', reson => {
-    // console.log(`==== ${reson} ====\n`, socket.adapter.rooms);
+    console.log(`==== ${reson} ====\n`, socket.adapter.rooms);
 
     // 應該也要刪除在 User 裡的名單
     User.remove(socket.id);

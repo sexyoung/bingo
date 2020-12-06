@@ -25,8 +25,8 @@ export class User {
   save() {
     const saveUser = {};
     const attr = Object.keys(this).filter(v =>
-      // socket, room 不用存
-      !['socket', 'room', 'matrix'].includes(v)
+      // socket 不用存
+      !['socket'].includes(v)
     );
 
     for (let i = 0; i < attr.length; i++) {
@@ -74,6 +74,19 @@ export class User {
 
   startGame() {
     this.socket.emit(SocketEvent.Room.TriggerStartGame, this.room);
+  }
+
+  checked(num) {
+    if(!this.checkedList) {
+      this.checkedList = [];
+    }
+    this.checkedList = [...new Set([...this.checkedList, num])].sort((a, b) => a - b);
+    this.save();
+    this.socket.emit(
+      SocketEvent.Game.CheckNum,
+      this.room,
+      num
+    );
   }
 
   leave() {

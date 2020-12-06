@@ -8,7 +8,7 @@ export function HomePage() {
   const history = useHistory();
 
   function handleClick() {
-    history.push(`/${getRandomChar(4)}/join`);
+    history.replace(`/${getRandomChar(4)}/join`);
   }
 
   return (

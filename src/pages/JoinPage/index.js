@@ -2,18 +2,23 @@ import qrcode from 'qrcode';
 import { useParams, useHistory } from "react-router-dom";
 import { useLayoutEffect, createRef, useState } from "react";
 
-import { Matrinx, resetMatrix, randomMatrix } from "components";
+import { Matrinx } from "components";
 import { SocketEvent } from "const";
 
-export function JoinPage({ user }) {
+let num = 0;
 
+export function JoinPage({ user }) {
   const nameDOM = createRef();
   const inputDOM = createRef();
   const history = useHistory();
   const { room } = useParams();
   const canvasDOM = createRef();
+  const [size, setSize] = useState(5);
   const [userList, setUserList] = useState([]);
   const [chatHistory, setChatHistory] = useState([]);
+  const [ matrix, setMatrix ] = useState(
+    Array(size ** 2).fill(0)
+  );
 
   useLayoutEffect(() => {
     qrcode.toCanvas(canvasDOM.current, `${location.origin}/#/${room}/join`, error => {
@@ -44,8 +49,7 @@ export function JoinPage({ user }) {
 
     // 開始遊戲！
     user.socket.on(SocketEvent.Room.StartGame, () => {
-      // user.save();
-      // 不應該存在 client, 應該存在 server side
+      user.save();
       history.replace(`/${room}/game`);
     });
   }, []);
@@ -69,6 +73,26 @@ export function JoinPage({ user }) {
 
   const handleStartGame = () => {
     user.startGame();
+  };
+
+
+  const resetMatrix = () => {
+    setMatrix(Array(size ** 2).fill(0));
+  };
+
+  const randomMatrix = () => {
+    setMatrix(
+      [...Array(size ** 2).keys()]
+        .map(v => v + 1)
+        .sort(() => .5 - Math.random())
+    );
+  };
+
+  const handlePutNum = index => {
+    if(matrix[index]) return;
+    const updateMatrix = [...matrix];
+    updateMatrix[index] = ++num;
+    setMatrix(updateMatrix);
   };
 
   return (
@@ -109,7 +133,12 @@ export function JoinPage({ user }) {
       {/* 賓果 */}
       <button onClick={resetMatrix}>reset</button>
       <button onClick={randomMatrix}>random</button>
-      <Matrinx {...{ updateProcess }} />
+      <Matrinx {...{
+        size,
+        data: matrix,
+        updateProcess,
+        onClick: handlePutNum
+      }} />
       <canvas ref={canvasDOM} id="canvas" />
       <div>{`${location.origin}/#/${room}/join`}</div>
     </div>

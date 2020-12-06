@@ -16,7 +16,7 @@ export function RoomPage() {
   );
   const { path } = useRouteMatch();
 
-  useEffect(() => user.leave, []);
+  useEffect(() => () => user.leave(), []);
 
   return (
     <div classs="RoomPage">

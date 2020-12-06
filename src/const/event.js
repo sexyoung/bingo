@@ -11,5 +11,9 @@ export const SocketEvent = {
   },
   User: {
     ChangeName: 'UserChangeName',
+  },
+  Game: {
+    CheckNum: 'GameCheckNum',
+    UpdateChecked: 'GameUpdateChecked',
   }
 };
