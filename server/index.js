@@ -3,17 +3,16 @@ import express from 'express';
 import socketIO from 'socket.io';
 
 import {
-  ChangeName,
-} from "./UserEvent";
+  UserHandler,
+} from "./UserHandler";
 
 import {
-  PlayerJoin,
-  MessageSend,
-} from "./RoomEvent";
+  RoomHandler,
+} from "./RoomHandler";
 
 import {
-  Disconnect,
-} from "./SocketEvent";
+  SocketHandler,
+} from "./SocketHandler";
 
 const app = express();
 const server = http.createServer(app);
@@ -35,10 +34,9 @@ io.on('connection', socket => {
   console.log(`user connect: ${socket.id}`);
   socket.emit("connected", socket.id);
 
-  PlayerJoin({ io, socket });
-  ChangeName({ io, socket });
-  MessageSend({ io, socket });
-  Disconnect({ io, socket });
+  UserHandler({ io, socket });
+  RoomHandler({ io, socket });
+  SocketHandler({ io, socket });
 
 });
 

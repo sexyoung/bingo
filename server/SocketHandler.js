@@ -1,6 +1,6 @@
 import { Room } from './Room';
 
-export const Disconnect = ({ io, socket }) => {
+export const SocketHandler = ({ io, socket }) => {
   socket.on('disconnect', reson => {
     // console.log(`==== ${reson} ====\n`, socket.adapter.rooms);
 
