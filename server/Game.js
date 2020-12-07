@@ -10,4 +10,8 @@ export class Game {
     gameRoom[room].sort((a, b) => a - b);
     return gameRoom[room];
   }
+
+  static get(room) {
+    return gameRoom[room] || [];
+  }
 }

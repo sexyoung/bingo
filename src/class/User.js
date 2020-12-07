@@ -81,11 +81,17 @@ export class User {
       this.checkedList = [];
     }
     this.checkedList = [...new Set([...this.checkedList, num])].sort((a, b) => a - b);
-    this.save();
     this.socket.emit(
       SocketEvent.Game.CheckNum,
       this.room,
       num
+    );
+  }
+
+  fetchMatrix() {
+    this.socket.emit(
+      SocketEvent.Game.FetchMatrix,
+      this.room
     );
   }
 

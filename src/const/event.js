@@ -14,6 +14,7 @@ export const SocketEvent = {
   },
   Game: {
     CheckNum: 'GameCheckNum',
+    FetchMatrix: 'GameFetchMatrix',
     UpdateChecked: 'GameUpdateChecked',
   }
 };
