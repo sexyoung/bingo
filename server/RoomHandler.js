@@ -1,7 +1,7 @@
 import { SocketEvent } from "../src/const";
 import { User } from './User';
 import { Room } from './Room';
-
+import { Game } from './Game';
 
 export const RoomHandler = ({ io, socket }) => {
   socket.on(SocketEvent.Room.PlayerJoin, (room, user) => {
@@ -41,6 +41,11 @@ export const RoomHandler = ({ io, socket }) => {
   });
 
   socket.on(SocketEvent.Room.TriggerStartGame, room => {
+    // console.warn('all socket in room', [...io.sockets.adapter.rooms.get(room)]);
+    Game.build({
+      room,
+      sockets: [...io.sockets.adapter.rooms.get(room)],
+    });
     io.in(room).emit(SocketEvent.Room.StartGame);
   });
 };
