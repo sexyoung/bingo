@@ -3,13 +3,7 @@ import { useEffect } from "react";
 
 import style from './style.module.scss';
 
-export function Matrinx({ updateProcess, data, onClick, size, checkedList = [], isActive }) {
-  useEffect(() => {
-    data.every(v => v) && updateProcess && updateProcess(
-      data,
-      data.filter(v => v).length / (size ** 2)
-    );
-  }, [data.join(',')]);
+export function Matrix({ data, onClick, checkedList = [], isActive }) {
 
   const handleClick = index => {
     isActive && onClick(index);

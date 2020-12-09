@@ -2,7 +2,7 @@ import qrcode from 'qrcode';
 import { useParams, useHistory } from "react-router-dom";
 import { useLayoutEffect, createRef, useState } from "react";
 
-import { Matrinx } from "components";
+import { Matrix } from "components";
 import { SocketEvent } from "const";
 
 let num = 0;
@@ -70,34 +70,41 @@ export function JoinPage({ user }) {
     user.changeName(room, nameDOM.current.value);
   };
 
-  const updateProcess = (matrix, percentage) => {
+  const updateProcess = matrix => {
     console.warn('updateProcess');
     user.matrix = matrix;
-    user.updateProcess(room, percentage);
+    user.updateProcess(room, matrix.filter(v => v).length / (size ** 2));
   };
 
   const handleStartGame = () => {
     user.startGame(room);
   };
 
+  const matrixProcess = updateMatrix => {
+    setMatrix(updateMatrix);
+    updateProcess(updateMatrix);
+  };
 
   const resetMatrix = () => {
-    setMatrix(Array(size ** 2).fill(0));
+    const updateMatrix = Array(size ** 2).fill(0);
+    /** 這邊是不是有更好的寫法? */
+    matrixProcess(updateMatrix);
   };
 
   const randomMatrix = () => {
-    setMatrix(
-      [...Array(size ** 2).keys()]
-        .map(v => v + 1)
-        .sort(() => .5 - Math.random())
-    );
+    const updateMatrix = [...Array(size ** 2).keys()]
+      .map(v => v + 1)
+      .sort(() => .5 - Math.random());
+    /** 這邊是不是有更好的寫法? */
+    matrixProcess(updateMatrix);
   };
 
   const handlePutNum = index => {
     if(matrix[index]) return;
     const updateMatrix = [...matrix];
     updateMatrix[index] = ++num;
-    setMatrix(updateMatrix);
+    /** 這邊是不是有更好的寫法? */
+    matrixProcess(updateMatrix);
   };
 
   return (
@@ -138,11 +145,10 @@ export function JoinPage({ user }) {
       {/* 賓果 */}
       <button onClick={resetMatrix}>reset</button>
       <button onClick={randomMatrix}>random</button>
-      <Matrinx {...{
-        size,
+      <Matrix {...{
         data: matrix,
-        updateProcess,
-        onClick: handlePutNum
+        onClick: handlePutNum,
+        isActive: true,
       }} />
       <canvas ref={canvasDOM} id="canvas" />
       <div>{`${location.origin}/#/${room}/join`}</div>

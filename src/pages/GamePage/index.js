@@ -1,5 +1,5 @@
 import { SocketEvent } from "const";
-import { Matrinx } from "components";
+import { Matrix } from "components";
 import { useLayoutEffect, useState } from "react";
 import { useParams, useHistory } from "react-router-dom";
 
@@ -44,7 +44,7 @@ export function GamePage({ user }) {
   return (
     <div>
       <h2>GamePage</h2>
-      <Matrinx {...{
+      <Matrix {...{
         checkedList,
         data: user.matrix,
         onClick: handleClick,
