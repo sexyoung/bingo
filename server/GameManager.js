@@ -25,6 +25,7 @@ class GameManager {
     const checkedList = [...new Set([...GameList[room].checkedList, num])];
     checkedList.sort((a, b) => a - b);
     GameList[room].checkedList = checkedList;
+    GameList[room].turnIndex = (GameList[room].turnIndex + 1) % GameList[room].idList.length;
     return checkedList;
   }
 
@@ -35,16 +36,13 @@ class GameManager {
     idList.sort(() => Math.random() - .5);
     GameList[room] = {
       idList,
+      turnIndex: 0,
       checkedList: [],
     };
   }
 
-  // TODO: build the GameList[room] shouldn't at get method
   get(room) {
-    // if(!GameList[room]) {
-    //   GameList[room] = {...initData};
-    // }
-    return GameList[room].checkedList || [];
+    return GameList[room] || {};
   }
 
   close(room) {

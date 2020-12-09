@@ -6,6 +6,7 @@ import { useParams, useHistory } from "react-router-dom";
 export function GamePage({ user }) {
   const { room } = useParams();
   const history = useHistory();
+  const [ turnID, setTurnID ] = useState("");
   const [ checkedList, setCheckedList ] = useState([]);
   useLayoutEffect(() => {
     user.join(room);
@@ -18,8 +19,9 @@ export function GamePage({ user }) {
 
     user.socket.on(
       SocketEvent.Game.UpdateChecked,
-      list => {
-        setCheckedList(list);
+      (checkList, turnID) => {
+        setCheckedList(checkList);
+        setTurnID(turnID);
       }
     );
 
@@ -38,6 +40,7 @@ export function GamePage({ user }) {
         checkedList,
         data: user.matrix,
         onClick: handleClick,
+        isActive: turnID === user.id,
       }} />
     </div>
   );

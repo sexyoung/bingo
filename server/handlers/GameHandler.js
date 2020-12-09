@@ -3,19 +3,21 @@ import { SocketEvent } from "../../src/const";
 
 export const GameHandler = ({ io, socket }) => {
   socket.on(SocketEvent.Game.CheckNum, (room, num) => {
-    const checkList = GameManager.checked(room, num);
-    console.warn('checkList', checkList);
+    const checkedList = GameManager.checked(room, num);
+    const { turnIndex, idList } = GameManager.get(room);
     io.in(room).emit(
       SocketEvent.Game.UpdateChecked,
-      checkList
+      checkedList,
+      idList[turnIndex],
     );
   });
 
   socket.on(SocketEvent.Game.FetchMatrix, room => {
-    const checkList = GameManager.get(room);
+    const { checkedList, turnIndex, idList } = GameManager.get(room);
     io.in(room).emit(
       SocketEvent.Game.UpdateChecked,
-      checkList
+      checkedList,
+      idList[turnIndex],
     );
   });
 };
