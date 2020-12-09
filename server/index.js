@@ -2,10 +2,12 @@ import http from 'http';
 import express from 'express';
 import socketIO from 'socket.io';
 
-import { UserHandler } from "./UserHandler";
-import { RoomHandler } from "./RoomHandler";
-import { GameHandler } from "./GameHandler";
-import { SocketHandler } from "./SocketHandler";
+import {
+  RoomHandler,
+  GameHandler,
+  UserHandler,
+  SocketHandler,
+} from "./handlers";
 
 const app = express();
 const server = http.createServer(app);

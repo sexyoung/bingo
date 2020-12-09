@@ -1,25 +1,42 @@
-export class UserManager {
+const UserList = {};
+let instance = null;
+
+class UserManager {
+
   constructor() {
-    this.item = {};
+    if(!instance) {
+      instance = this;
+    }
+    return instance;
   }
-  get({ queryType, queryData }) {
-    if(queryType === 'socket')
-      return this.item[queryData];
-    if(queryType === 'id') {
-      for (const key in this.item) {
-        if(this.item[key].id === id) {
-          return this.item[key];
+
+  /**
+   * query is object like
+   * {[queryKey]: queryValue}
+   */
+  get(query) {
+    const key = Object.keys(query)[0];
+    if(key === 'socketID')
+      return UserList[query[key]];
+
+    if(key === 'id') {
+      for (const socketID in UserList) {
+        if(UserList[socketID].id === query[key]) {
+          return UserList[socketID];
         }
       }
     }
+
     return null;
   }
 
   add({ socketID, user }) {
-    this.item[socketID] = user;
+    UserList[socketID] = user;
   }
 
   remove(socketID) {
-    delete this.item[socketID];
+    delete UserList[socketID];
   }
 }
+
+export default new UserManager();
