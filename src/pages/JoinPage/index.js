@@ -28,51 +28,56 @@ export function JoinPage({ user }) {
 
     user.join(room);
 
-    // 拒絕進入，導頁
-    user.socket.on(SocketEvent.Room.Denied, () => {
+    const PlayerUpdate = socketList => setUserList(socketList);
+    const MessageUpdate = message => setChatHistory(chatHistory => [ message, ...chatHistory ]);
+    const Denied = () => {
       user.leave();
       history.push('/denied');
-    });
-
-    // 使用者更新
-    user.socket.on(SocketEvent.Room.PlayerUpdate, socketList => {
-      setUserList(socketList);
-    });
-
-    // 訊息更新
-    user.socket.on(SocketEvent.Room.MessageUpdate, message => {
-      setChatHistory(chatHistory => [
-        message,
-        ...chatHistory
-      ]);
-    });
-
-    // 開始遊戲！
-    user.socket.on(SocketEvent.Room.StartGame, () => {
+    };
+    const StartGame = () => {
       user.save();
       history.replace(`/${room}/game`);
-    });
+    };
+
+    // 拒絕進入，導頁
+    user.socket.on(SocketEvent.Room.Denied, Denied);
+
+    // 使用者更新
+    user.socket.on(SocketEvent.Room.PlayerUpdate, PlayerUpdate);
+
+    // 訊息更新
+    user.socket.on(SocketEvent.Room.MessageUpdate, MessageUpdate);
+
+    // 開始遊戲！
+    user.socket.on(SocketEvent.Room.StartGame, StartGame);
+
+    return () => {
+      user.socket.off(SocketEvent.Room.Denied, Denied);
+      user.socket.off(SocketEvent.Room.StartGame, StartGame);
+      user.socket.off(SocketEvent.Room.PlayerUpdate, PlayerUpdate);
+      user.socket.off(SocketEvent.Room.MessageUpdate, MessageUpdate);
+    };
   }, []);
 
   const handleSubmit = e => {
     e.preventDefault();
-    user.send(inputDOM.current.value);
+    user.send(room, inputDOM.current.value);
     inputDOM.current.value = '';
   };
 
   const handleRename = e => {
     e.preventDefault();
-    user.changeName(nameDOM.current.value);
+    user.changeName(room, nameDOM.current.value);
   };
 
   const updateProcess = (matrix, percentage) => {
     console.warn('updateProcess');
     user.matrix = matrix;
-    user.updateProcess(percentage);
+    user.updateProcess(room, percentage);
   };
 
   const handleStartGame = () => {
-    user.startGame();
+    user.startGame(room);
   };
 
 

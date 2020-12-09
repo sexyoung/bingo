@@ -9,27 +9,35 @@ export function GamePage({ user }) {
   const [ turnID, setTurnID ] = useState("");
   const [ checkedList, setCheckedList ] = useState([]);
   useLayoutEffect(() => {
-    user.join(room);
-
-    // 拒絕進入，導頁
-    user.socket.on(SocketEvent.Room.Denied, () => {
+    const Denied = () => {
       user.leave();
       history.push('/denied');
-    });
+    };
 
-    user.socket.on(
-      SocketEvent.Game.UpdateChecked,
-      (checkList, turnID) => {
-        setCheckedList(checkList);
-        setTurnID(turnID);
-      }
-    );
+    const UpdateChecked = (checkList, turnID) => {
+      setCheckedList(checkList);
+      setTurnID(turnID);
+    };
+
+    // 如果使用者重整的話，會需要執行這行
+    if(!user.room) user.join(room);
+
+    // 拒絕進入，導頁
+    user.socket.on(SocketEvent.Room.Denied, Denied);
+
+    // 點擊數字
+    user.socket.on(SocketEvent.Game.UpdateChecked, UpdateChecked);
 
     user.fetchMatrix(room);
+
+    return () => {
+      user.socket.off(SocketEvent.Room.Denied, Denied);
+      user.socket.off(SocketEvent.Game.UpdateChecked, UpdateChecked);
+    };
   }, []);
 
   const handleClick = index => {
-    user.checked(user.matrix[index]);
+    user.checked(room, user.matrix[index]);
     // save user checked num
     // and notice other user the number is checked
   };

@@ -26,7 +26,7 @@ export class User {
     const saveUser = {};
     const attr = Object.keys(this).filter(v =>
       // socket 不用存
-      !['socket'].includes(v)
+      !['socket', 'room'].includes(v)
     );
 
     for (let i = 0; i < attr.length; i++) {
@@ -46,7 +46,7 @@ export class User {
   }
 
   join(room) {
-    this.room = room;
+    // this.room = room;
     this.socket.emit(
       SocketEvent.Room.PlayerJoin,
       room,
@@ -54,44 +54,44 @@ export class User {
     );
   }
 
-  send(message) {
-    this.socket.emit(SocketEvent.Room.MessageSend, this.room, message);
+  send(room, message) {
+    this.socket.emit(SocketEvent.Room.MessageSend, room, message);
   }
 
-  updateProcess(percentage) {
+  updateProcess(room, percentage) {
     this.socket.emit(
       SocketEvent.Room.UpdateProcess,
-      this.room,
+      room,
       percentage
     );
   }
 
-  changeName(newName) {
+  changeName(room, newName) {
     this.name = newName;
     this.save();
-    this.socket.emit(SocketEvent.User.ChangeName, this.room, newName);
+    this.socket.emit(SocketEvent.User.ChangeName, room, newName);
   }
 
-  startGame() {
-    this.socket.emit(SocketEvent.Room.TriggerStartGame, this.room);
+  startGame(room) {
+    this.socket.emit(SocketEvent.Room.TriggerStartGame, room);
   }
 
-  checked(num) {
+  checked(room, num) {
     if(!this.checkedList) {
       this.checkedList = [];
     }
     this.checkedList = [...new Set([...this.checkedList, num])].sort((a, b) => a - b);
     this.socket.emit(
       SocketEvent.Game.CheckNum,
-      this.room,
+      room,
       num
     );
   }
 
-  fetchMatrix() {
+  fetchMatrix(room) {
     this.socket.emit(
       SocketEvent.Game.FetchMatrix,
-      this.room
+      room
     );
   }
 
