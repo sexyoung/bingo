@@ -7,6 +7,7 @@ export const SocketEvent = {
     MessageSend: 'RoomMessageSend',
     MessageUpdate: 'RoomMessageUpdate',
     StartGame: 'RoomStartGame',
+    SaveMatrix: 'RoomSaveMatrix',
     TriggerStartGame: 'RoomTriggerStartGame',
   },
   User: {
@@ -14,6 +15,7 @@ export const SocketEvent = {
   },
   Game: {
     CheckNum: 'GameCheckNum',
+    SelfMatrix: 'GameSelfMatrix',
     FetchMatrix: 'GameFetchMatrix',
     UpdateChecked: 'GameUpdateChecked',
   }

@@ -26,7 +26,7 @@ export class User {
     const saveUser = {};
     const attr = Object.keys(this).filter(v =>
       // socket 不用存
-      !['socket', 'room'].includes(v)
+      !['socket', 'room', 'matrix'].includes(v)
     );
 
     for (let i = 0; i < attr.length; i++) {
@@ -72,8 +72,12 @@ export class User {
     this.socket.emit(SocketEvent.User.ChangeName, room, newName);
   }
 
-  startGame(room) {
-    this.socket.emit(SocketEvent.Room.TriggerStartGame, room);
+  startGame(room, size, winLine) {
+    this.socket.emit(SocketEvent.Room.TriggerStartGame, room, size, winLine);
+  }
+
+  saveMatrix2Server(room, matrix) {
+    this.socket.emit(SocketEvent.Room.SaveMatrix, room, matrix);
   }
 
   checked(room, num) {

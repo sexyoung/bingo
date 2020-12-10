@@ -36,6 +36,7 @@ export function JoinPage({ user }) {
     };
     const StartGame = () => {
       user.save();
+      user.saveMatrix2Server(room, matrix);
       history.replace(`/${room}/game`);
     };
 
@@ -77,7 +78,7 @@ export function JoinPage({ user }) {
   };
 
   const handleStartGame = () => {
-    user.startGame(room);
+    user.startGame(room, size, size);
   };
 
   const matrixProcess = updateMatrix => {

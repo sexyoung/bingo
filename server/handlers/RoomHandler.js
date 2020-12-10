@@ -40,12 +40,18 @@ export const RoomHandler = ({ io, socket }) => {
     });
   });
 
-  socket.on(SocketEvent.Room.TriggerStartGame, room => {
+  socket.on(SocketEvent.Room.TriggerStartGame, (room, size, winLine) => {
     // console.warn('all socket in room', [...io.sockets.adapter.rooms.get(room)]);
     GameManager.build({
+      size,
       room,
+      winLine,
       sockets: [...io.sockets.adapter.rooms.get(room)],
     });
     io.in(room).emit(SocketEvent.Room.StartGame);
+  });
+
+  socket.on(SocketEvent.Room.SaveMatrix, (room, matrix) => {
+
   });
 };

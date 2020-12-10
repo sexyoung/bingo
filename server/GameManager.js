@@ -29,13 +29,15 @@ class GameManager {
     return checkedList;
   }
 
-  build({room, sockets}) {
+  build({size, winLine, room, sockets}) {
     const idList = sockets
       .map(socketID => UserManager.get({ socketID }))
-      .map(({ id }) => id);
+      .map(({ id }) => ({ id, matrix: [] }));
     idList.sort(() => Math.random() - .5);
     GameList[room] = {
+      size,
       idList,
+      winLine,
       turnIndex: 0,
       checkedList: [],
     };

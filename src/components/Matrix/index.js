@@ -1,5 +1,4 @@
 import cx from "classnames";
-import { useEffect } from "react";
 
 import style from './style.module.scss';
 
