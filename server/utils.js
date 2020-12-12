@@ -15,6 +15,6 @@ export const genWinStr = size => {
 
   /** 交叉線 */
   result.push(serial.map(v => v * (size + 1)));
-  result.push(serial.map(v => v * (size - 1)));
+  result.push(serial.map(v => (v + 1) * (size - 1)));
   return result.map(line => `,${line.join(',')},`).join('|');
 };
