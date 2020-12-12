@@ -1,4 +1,5 @@
 import UserManager from './UserManager';
+import { genWinStr } from './utils';
 import { SocketEvent } from "../src/const";
 
 const GameList = {};
@@ -40,6 +41,7 @@ class GameManager {
       winLine,
       turnIndex: 0,
       checkedList: [],
+      winStr: genWinStr(size),
     };
   }
 

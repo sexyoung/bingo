@@ -3,27 +3,28 @@ import { Matrix } from "components";
 import { useLayoutEffect, useState } from "react";
 import { useParams, useHistory } from "react-router-dom";
 
+let checkedList = [];
+let plyerInfoList = [];
+
 export function GamePage({ user }) {
   const { room } = useParams();
   const history = useHistory();
   const [ turnID, setTurnID ] = useState("");
-  const [ checkedList, setCheckedList ] = useState([]);
-  const [ plyerInfoList, setPlayInfoList ] = useState([]);
   useLayoutEffect(() => {
     const Denied = () => {
       user.leave();
       history.push('/denied');
     };
 
-    const UpdateChecked = (checkList, turnID, plyerInfoList) => {
-      setTurnID(turnID);
-      setPlayInfoList(plyerInfoList);
-      setCheckedList(checkList);
+    const UpdateChecked = (newCheckedList, newTurnID, newPlyerInfoList) => {
+      checkedList = newCheckedList;
+      plyerInfoList = newPlyerInfoList;
+      setTurnID(newTurnID);
     };
 
-    const SelfMatrix = (matrix, checkedList, turnID, plyerInfoList) => {
+    const SelfMatrix = (matrix, newCheckedList, newTurnID, newPlyerInfoList) => {
       user.matrix = matrix;
-      UpdateChecked(checkedList, turnID, plyerInfoList);
+      UpdateChecked(newCheckedList, newTurnID, newPlyerInfoList);
     };
 
     // 拒絕進入，導頁
@@ -55,11 +56,11 @@ export function GamePage({ user }) {
   }, []);
 
   const handleClick = index => {
+    if (checkedList.includes(user.matrix[index])) return;
     user.checked(room, user.matrix[index]);
     // save user checked num
     // and notice other user the number is checked
   };
-  console.warn(plyerInfoList);
   if(!user.matrix?.length) return null;
   return (
     <div>
@@ -70,9 +71,9 @@ export function GamePage({ user }) {
         onClick: handleClick,
         isActive: turnID === user.id,
       }} />
-      {plyerInfoList.map(playerInfo =>
-        <div key={playerInfo.id}>
-          {playerInfo.name}
+      {plyerInfoList.map((playerInfo, index) =>
+        <div key={index}>
+          {playerInfo.name}: {playerInfo.winCount}
         </div>
       )}
     </div>

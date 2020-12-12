@@ -17,7 +17,9 @@
     justify-content: center;
     &.checked {
       position: relative;
+      cursor: not-allowed;
       &:before {
+        cursor: not-allowed;
         position: absolute;
         content: '';
         width: 60%;

@@ -2,15 +2,21 @@ import UserManager from "../UserManager";
 import GameManager from '../GameManager';
 import { SocketEvent } from "../../src/const";
 
-const getLineCount = (matrix, checkedList) => {
-  return matrix.length + checkedList.length;
+const getLineCount = (matrix, checkedList, winStr, size) => {
+  const result = checkedList
+    .map(num => matrix.findIndex(v => v === num))
+    .reduce((result, index) =>
+      result.replace(new RegExp(`,${index},`, 'g'), ',,')
+    , winStr)
+    .match(new RegExp(`${','.repeat(size + 1)}`, 'g'));
+  return result ? result.length: 0;
 };
 
-const getPlayerLineCount = ({ idList, checkedList }) => {
+const getPlayerLineCount = ({ idList, checkedList, winStr, size }) => {
   return idList.map(user => ({
-    id: user.id,
+    // id: user.id,
     name: UserManager.get({ id: user.id }).name,
-    winCount: getLineCount(user.matrix, checkedList)
+    winCount: getLineCount(user.matrix, checkedList, winStr, size)
   }));
 };
 
