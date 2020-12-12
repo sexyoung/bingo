@@ -30,6 +30,10 @@ class UserManager {
     return null;
   }
 
+  all() {
+    return UserList;
+  }
+
   add({ socketID, user }) {
     UserList[socketID] = user;
   }

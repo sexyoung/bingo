@@ -6,7 +6,7 @@ import UserManager from '../UserManager';
 export const RoomHandler = ({ io, socket }) => {
   const socketID = socket.id;
   socket.on(SocketEvent.Room.PlayerJoin, (room, user) => {
-    // 先檢查這個 id 是否有存在，有的話就不新增
+    // 先檢查這個 id 是否有存在room，有的話就不新增
     if(UserManager.get({ id: user.id })) {
       return io.to(socket.id).emit(
         SocketEvent.Room.Denied
@@ -14,7 +14,7 @@ export const RoomHandler = ({ io, socket }) => {
     }
 
     socket.join(room);
-    socket.leave(socket.id);
+    // socket.leave(socket.id); // 果然不能離開自己的 socketid
     UserManager.add({socketID, user});
 
     // [room]房裡的所有連線
@@ -51,7 +51,11 @@ export const RoomHandler = ({ io, socket }) => {
     io.in(room).emit(SocketEvent.Room.StartGame);
   });
 
+  // 把每個人的 matrix 暫存
   socket.on(SocketEvent.Room.SaveMatrix, (room, matrix) => {
-
+    const { idList } = GameManager.get(room);
+    const index = idList.findIndex(user => user.id === UserManager.get({ socketID: socket.id }).id);
+    idList[index].matrix = matrix;
+    GameManager.get(room).idList = idList;
   });
 };

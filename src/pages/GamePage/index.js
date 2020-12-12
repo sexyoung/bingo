@@ -6,9 +6,9 @@ import { useParams, useHistory } from "react-router-dom";
 export function GamePage({ user }) {
   const { room } = useParams();
   const history = useHistory();
-  const [ plyerInfoList, setPlayInfoList ] = useState([]);
   const [ turnID, setTurnID ] = useState("");
   const [ checkedList, setCheckedList ] = useState([]);
+  const [ plyerInfoList, setPlayInfoList ] = useState([]);
   useLayoutEffect(() => {
     const Denied = () => {
       user.leave();
@@ -21,12 +21,10 @@ export function GamePage({ user }) {
       setCheckedList(checkList);
     };
 
-    const SelfMatrix = matrix => {
+    const SelfMatrix = (matrix, checkedList, turnID, plyerInfoList) => {
       user.matrix = matrix;
+      UpdateChecked(checkedList, turnID, plyerInfoList);
     };
-
-    // 如果使用者重整的話，會需要執行這行
-    if(!user.room) user.join(room);
 
     // 拒絕進入，導頁
     user.socket.on(SocketEvent.Room.Denied, Denied);
@@ -37,7 +35,17 @@ export function GamePage({ user }) {
     // 從伺服端取得自己的matrix
     user.socket.on(SocketEvent.Game.SelfMatrix, SelfMatrix);
 
-    user.fetchMatrix(room);
+    if(user.socket.connected) {
+      user.fetchMatrix(room); // trigger RoomPlayerUpdate
+    } else {
+      // join
+      // 如果使用者重整的話，會需要執行這行
+      if(!user.room) user.join(room);
+
+      user.socket.on(SocketEvent.Room.PlayerUpdate, () => {
+        user.fetchMatrix(room); // trigger RoomPlayerUpdate
+      });
+    }
 
     return () => {
       user.socket.off(SocketEvent.Room.Denied, Denied);

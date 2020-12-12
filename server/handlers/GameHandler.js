@@ -31,18 +31,12 @@ export const GameHandler = ({ io, socket }) => {
   socket.on(SocketEvent.Game.FetchMatrix, room => {
     const game = GameManager.get(room);
     const { checkedList, turnIndex, idList } = game;
-    console.log('\n\n\n\n');
-    console.warn(socket.id, SocketEvent.Game.SelfMatrix);
-    console.log('\n\n\n\n');
     io.to(socket.id).emit(
       SocketEvent.Game.SelfMatrix,
       idList.find(({ id }) => UserManager.get({ socketID: socket.id }).id === id).matrix,
+      checkedList,
+      idList[turnIndex].id,
+      getPlayerLineCount(game),
     );
-    // io.in(room).emit(
-    //   SocketEvent.Game.UpdateChecked,
-    //   checkedList,
-    //   idList[turnIndex].id,
-    //   getPlayerLineCount(game),
-    // );
   });
 };
