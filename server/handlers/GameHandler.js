@@ -14,7 +14,6 @@ const getLineCount = (matrix, checkedList, winStr, size) => {
 
 const getPlayerLineCount = ({ idList, checkedList, winStr, size }) => {
   return idList.map(user => ({
-    // id: user.id,
     name: UserManager.get({ id: user.id }).name,
     winCount: getLineCount(user.matrix, checkedList, winStr, size)
   }));

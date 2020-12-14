@@ -2,7 +2,7 @@ import {
   Route,
   Switch,
 } from "react-router-dom";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo } from "react";
 import socketIOClient from "socket.io-client";
 import { useRouteMatch } from "react-router-dom";
 
@@ -11,12 +11,13 @@ import * as Page from "pages";
 const { REACT_APP_SOCKET_URL: SocketURL } = process.env;
 
 export function RoomPage() {
-  const [ user ] = useState(
-    new User(socketIOClient(SocketURL))
-  );
   const { path } = useRouteMatch();
+  const user = useMemo(() => new User(socketIOClient(SocketURL)), []);
+  useEffect(() => {
+    return () => user.leave();
+  }, []);
 
-  useEffect(() => () => user.leave(), []);
+  if(!user) return null;
 
   return (
     <div classs="RoomPage">

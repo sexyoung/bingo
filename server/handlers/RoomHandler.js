@@ -41,7 +41,6 @@ export const RoomHandler = ({ io, socket }) => {
   });
 
   socket.on(SocketEvent.Room.TriggerStartGame, (room, size, winLine) => {
-    // console.warn('all socket in room', [...io.sockets.adapter.rooms.get(room)]);
     GameManager.build({
       size,
       room,

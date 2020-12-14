@@ -15,7 +15,6 @@ class GameManager {
   }
 
   updatePlayer({io, id, sockets}) {
-    // console.warn('====', sockets.map(User.get));
     io.to(id).emit(
       SocketEvent.Room.PlayerUpdate,
       sockets.map(socketID => UserManager.get({ socketID }))
@@ -43,6 +42,19 @@ class GameManager {
       checkedList: [],
       winStr: genWinStr(size),
     };
+  }
+
+  removeUser(userID) {
+    // remove all user from all gameRoom
+    for (const room in GameList) {
+      const index = GameList[room].idList.findIndex(user => user.id === userID);
+      if(index !== -1) {
+        GameList[room].idList = [
+          ...GameList[room].idList.slice(0, index),
+          ...GameList[room].idList.slice(index + 1),
+        ];
+      }
+    }
   }
 
   get(room) {

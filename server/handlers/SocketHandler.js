@@ -3,7 +3,7 @@ import UserManager from '../UserManager';
 
 export const SocketHandler = ({ io, socket }) => {
   socket.on('disconnect', reson => {
-    // console.log(`==== ${reson} ====\n`, socket.adapter.rooms);
+    console.log(`==== ${reson} ====\n`, reson, socket.id);
 
     // 應該也要刪除在 User 裡的名單
     UserManager.remove(socket.id);

@@ -27,6 +27,12 @@ export function GamePage({ user }) {
       UpdateChecked(newCheckedList, newTurnID, newPlyerInfoList);
     };
 
+    // 如果使用者重整的話，並且立馬停止監聽
+    const fetchMatrix = () => {
+      user.fetchMatrix(room);
+      user.socket.off(SocketEvent.Room.PlayerUpdate, fetchMatrix);
+    };
+
     // 拒絕進入，導頁
     user.socket.on(SocketEvent.Room.Denied, Denied);
 
@@ -41,11 +47,8 @@ export function GamePage({ user }) {
     } else {
       // join
       // 如果使用者重整的話，會需要執行這行
-      if(!user.room) user.join(room);
-
-      user.socket.on(SocketEvent.Room.PlayerUpdate, () => {
-        user.fetchMatrix(room); // trigger RoomPlayerUpdate
-      });
+      user.join(room);
+      user.socket.on(SocketEvent.Room.PlayerUpdate, fetchMatrix);
     }
 
     return () => {

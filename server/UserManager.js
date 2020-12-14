@@ -1,6 +1,8 @@
 const UserList = {};
 let instance = null;
 
+import GameManager from "./GameManager";
+
 class UserManager {
 
   constructor() {

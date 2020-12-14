@@ -18,7 +18,7 @@ export class User {
     this.socket = socket;
 
     this.socket?.on("connected", socketID => {
-      console.log('socketID connected: ', socketID);
+      console.warn('socketID connected: ', socketID);
     });
   }
 
