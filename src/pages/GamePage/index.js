@@ -1,7 +1,11 @@
 import { SocketEvent } from "const";
 import { Matrix } from "components";
 import { useLayoutEffect, useState } from "react";
-import { useParams, useHistory } from "react-router-dom";
+import {
+  Link,
+  useParams,
+  useHistory,
+} from "react-router-dom";
 
 let checkedList = [];
 let plyerInfoList = [];
@@ -90,6 +94,7 @@ export function GamePage({ user }) {
             <div key={index}>{name} WIN!</div>
           )}
           <div onClick={handleReplay}>Play again</div>
+          <Link to="/">Home</Link>
         </div>
       }
       <Matrix {...{
