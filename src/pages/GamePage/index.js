@@ -5,6 +5,7 @@ import { useParams, useHistory } from "react-router-dom";
 
 let checkedList = [];
 let plyerInfoList = [];
+let winList = [];
 
 export function GamePage({ user }) {
   const { room } = useParams();
@@ -16,15 +17,16 @@ export function GamePage({ user }) {
       history.push('/denied');
     };
 
-    const UpdateChecked = (newCheckedList, newTurnID, newPlyerInfoList) => {
+    const UpdateChecked = (newCheckedList, newTurnID, newPlyerInfoList, newWinList = []) => {
       checkedList = newCheckedList;
       plyerInfoList = newPlyerInfoList;
+      winList = newWinList;
       setTurnID(newTurnID);
     };
 
-    const SelfMatrix = (matrix, newCheckedList, newTurnID, newPlyerInfoList) => {
+    const SelfMatrix = (matrix, newCheckedList, newTurnID, newPlyerInfoList, newWinList = []) => {
       user.matrix = matrix;
-      UpdateChecked(newCheckedList, newTurnID, newPlyerInfoList);
+      UpdateChecked(newCheckedList, newTurnID, newPlyerInfoList, newWinList);
     };
 
     // 如果使用者重整的話，並且立馬停止監聽
@@ -68,11 +70,19 @@ export function GamePage({ user }) {
   return (
     <div>
       <h2>GamePage</h2>
+      {Boolean(winList.length) &&
+        <div>
+          <h2>Result</h2>
+          {winList.map((name, index) =>
+            <div key={index}>{name} WIN!</div>
+          )}
+        </div>
+      }
       <Matrix {...{
         checkedList,
         data: user.matrix,
         onClick: handleClick,
-        isActive: turnID === user.id,
+        isActive: turnID === user.id && !winList.length,
       }} />
       {plyerInfoList.map((playerInfo, index) =>
         <div key={index}>

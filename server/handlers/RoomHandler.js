@@ -7,6 +7,7 @@ export const RoomHandler = ({ io, socket }) => {
   const socketID = socket.id;
   socket.on(SocketEvent.Room.PlayerJoin, (room, user) => {
     // 先檢查這個 id 是否有存在room，有的話就不新增
+    // issue: 可是不記住 user 那怎麼知道 matrix?
     if(UserManager.get({ id: user.id })) {
       return io.to(socket.id).emit(
         SocketEvent.Room.Denied

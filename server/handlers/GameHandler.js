@@ -19,29 +19,45 @@ const getPlayerLineCount = ({ idList, checkedList, winStr, size }) => {
   }));
 };
 
+const getResponse = ({ game, checkedList }) => {
+  const { turnIndex, idList, winLine } = game;
+  const winCountList = getPlayerLineCount(game);
+  const winList = winCountList
+    .filter(user =>
+      user.winCount >= winLine
+    )
+    .map(({ name }) => name);
+
+  return [
+    checkedList,
+    idList[turnIndex].id,
+    winCountList,
+    winList,
+  ];
+};
+
 export const GameHandler = ({ io, socket }) => {
 
   socket.on(SocketEvent.Game.CheckNum, (room, num) => {
-    const checkedList = GameManager.checked(room, num);
-    const game = GameManager.get(room);
-    const { turnIndex, idList } = game;
     io.in(room).emit(
       SocketEvent.Game.UpdateChecked,
-      checkedList,
-      idList[turnIndex].id,
-      getPlayerLineCount(game)
+      ...getResponse({
+        game: GameManager.get(room),
+        checkedList: GameManager.checked(room, num),
+      }),
     );
   });
 
   socket.on(SocketEvent.Game.FetchMatrix, room => {
     const game = GameManager.get(room);
-    const { checkedList, turnIndex, idList } = game;
+    const { checkedList, idList } = game;
     io.to(socket.id).emit(
       SocketEvent.Game.SelfMatrix,
       idList.find(({ id }) => UserManager.get({ socketID: socket.id }).id === id).matrix,
-      checkedList,
-      idList[turnIndex].id,
-      getPlayerLineCount(game),
+      ...getResponse({
+        game,
+        checkedList,
+      }),
     );
   });
 };
