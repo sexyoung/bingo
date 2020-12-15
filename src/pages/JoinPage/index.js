@@ -28,7 +28,7 @@ export function JoinPage({ user }) {
 
     user.join(room);
 
-    const PlayerUpdate = socketList => setUserList(socketList);
+    const PlayerUpdate = socketList => setUserList(socketList.filter(v => v));
     const MessageUpdate = message => setChatHistory(chatHistory => [ message, ...chatHistory ]);
     const Denied = () => {
       user.leave();

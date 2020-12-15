@@ -37,7 +37,7 @@ class GameManager {
     GameList[room] = {
       size,
       idList,
-      winLine,
+      winLine: 1,
       turnIndex: 0,
       checkedList: [],
       winStr: genWinStr(size),
@@ -62,8 +62,16 @@ class GameManager {
   }
 
   close(room) {
+    const socketIDList = [];
+    const idList = GameList[room].idList.map(({ id }) => id);
     delete GameList[room];
-    return true;
+    const UserList = UserManager.all();
+    for (const socketID in UserList) {
+      if(idList.includes(UserList[socketID].id)) {
+        socketIDList.push(socketID);
+      }
+    }
+    return socketIDList;
   }
 }
 

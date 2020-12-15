@@ -99,6 +99,13 @@ export class User {
     );
   }
 
+  replay(room) {
+    this.socket.emit(
+      SocketEvent.Game.RePlay,
+      room,
+    );
+  }
+
   leave() {
     this?.socket.close();
   }

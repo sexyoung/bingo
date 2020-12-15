@@ -35,6 +35,10 @@ export function GamePage({ user }) {
       user.socket.off(SocketEvent.Room.PlayerUpdate, fetchMatrix);
     };
 
+    const GoJoin = () => {
+      history.replace(`/${room}/join`);
+    };
+
     // 拒絕進入，導頁
     user.socket.on(SocketEvent.Room.Denied, Denied);
 
@@ -43,6 +47,9 @@ export function GamePage({ user }) {
 
     // 從伺服端取得自己的matrix
     user.socket.on(SocketEvent.Game.SelfMatrix, SelfMatrix);
+
+    // 從伺服端取得自己的matrix
+    user.socket.on(SocketEvent.Game.GoJoin, GoJoin);
 
     if(user.socket.connected) {
       user.fetchMatrix(room); // trigger RoomPlayerUpdate
@@ -54,6 +61,7 @@ export function GamePage({ user }) {
     }
 
     return () => {
+      user.socket.off(SocketEvent.Game.GoJoin, GoJoin);
       user.socket.off(SocketEvent.Room.Denied, Denied);
       user.socket.off(SocketEvent.Game.SelfMatrix, SelfMatrix);
       user.socket.off(SocketEvent.Game.UpdateChecked, UpdateChecked);
@@ -66,6 +74,11 @@ export function GamePage({ user }) {
     // save user checked num
     // and notice other user the number is checked
   };
+
+  const handleReplay = () => {
+    user.replay(room);
+  };
+
   if(!user.matrix?.length) return null;
   return (
     <div>
@@ -76,6 +89,7 @@ export function GamePage({ user }) {
           {winList.map((name, index) =>
             <div key={index}>{name} WIN!</div>
           )}
+          <div onClick={handleReplay}>Play again</div>
         </div>
       }
       <Matrix {...{

@@ -60,4 +60,14 @@ export const GameHandler = ({ io, socket }) => {
       }),
     );
   });
+
+  socket.on(SocketEvent.Game.RePlay, room => {
+    const socketIDList = GameManager.close(room);
+    socketIDList.forEach(socketID => {
+      UserManager.remove(socketID);
+    });
+    io.in(room).emit(
+      SocketEvent.Game.GoJoin,
+    );
+  });
 };

@@ -14,6 +14,8 @@ export const SocketEvent = {
     ChangeName: 'UserChangeName',
   },
   Game: {
+    GoJoin: 'GameGoJoin',
+    RePlay: 'GameRePlay',
     CheckNum: 'GameCheckNum',
     SelfMatrix: 'GameSelfMatrix',
     FetchMatrix: 'GameFetchMatrix',
