@@ -5,6 +5,8 @@ import { useLayoutEffect, createRef, useState } from "react";
 import { Matrix } from "components";
 import { SocketEvent } from "const";
 
+import style from "./style.module.scss";
+
 let num = 0;
 
 export function JoinPage({ user }) {
@@ -14,6 +16,7 @@ export function JoinPage({ user }) {
   const { room } = useParams();
   const canvasDOM = createRef();
   const [size, setSize] = useState(5);
+  const [showQRCode, setShowQRCode] = useState(false);
   const [userList, setUserList] = useState([]);
   const [chatHistory, setChatHistory] = useState([]);
   const [ matrix, setMatrix ] = useState(
@@ -109,7 +112,7 @@ export function JoinPage({ user }) {
   };
 
   return (
-    <div>
+    <div className={style.JoinPage}>
       <h3>JoinPage</h3>
       <form onSubmit={handleRename}>
         <strong>name: </strong>
@@ -151,8 +154,9 @@ export function JoinPage({ user }) {
         onClick: handlePutNum,
         isActive: true,
       }} />
-      <canvas ref={canvasDOM} id="canvas" />
-      <div>{`${location.origin}/#/${room}/join`}</div>
+      <div className={style.modal}>
+        <canvas ref={canvasDOM} id="canvas" />
+      </div>
     </div>
   );
 }
