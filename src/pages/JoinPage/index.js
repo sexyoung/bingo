@@ -1,4 +1,5 @@
 import qrcode from 'qrcode';
+import cx from 'classnames';
 import { useParams, useHistory } from "react-router-dom";
 import { useLayoutEffect, createRef, useState } from "react";
 
@@ -34,8 +35,8 @@ export function JoinPage({ user }) {
     const PlayerUpdate = socketList => setUserList(socketList.filter(v => v));
     const MessageUpdate = message => setChatHistory(chatHistory => [ message, ...chatHistory ]);
     const Denied = () => {
-      user.leave();
-      history.push('/denied');
+      // user.leave();
+      // history.push('/denied');
     };
     const StartGame = () => {
       user.save();
@@ -114,11 +115,24 @@ export function JoinPage({ user }) {
   return (
     <div className={style.JoinPage}>
       <h3>JoinPage</h3>
+
+      {/* step 1 */}
       <form onSubmit={handleRename}>
         <strong>name: </strong>
         <input type="text" defaultValue={user.name} ref={nameDOM} />
         <button>rename</button>
       </form>
+
+      {/* step 2 */}
+      <button onClick={resetMatrix}>reset</button>
+      <button onClick={randomMatrix}>random</button>
+      <Matrix {...{
+        data: matrix,
+        onClick: handlePutNum,
+        isActive: true,
+      }} />
+
+      {/* step 3 */}
       {userList.map((user, index) =>
         <div key={user.id}>
           {(user.percentage ?? 0) < 1 ?
@@ -130,13 +144,6 @@ export function JoinPage({ user }) {
           {!index && <span>← start button here</span>}
         </div>
       )}
-      {!userList.findIndex(u => u.id === user.id) &&
-        <button
-          onClick={handleStartGame}
-          disabled={userList.some(({ percentage = 0 }) => percentage !== 1)}
-        >start!!!!</button>
-      }
-      <div>=================</div>
       <form onSubmit={handleSubmit}>
         <input type="text" ref={inputDOM} placeholder="聊天" />
       </form>
@@ -145,16 +152,21 @@ export function JoinPage({ user }) {
           <div key={i}>{msg.sender}: {msg.text}</div>
         )}
       </div>
-      <div>=================</div>
-      {/* 賓果 */}
-      <button onClick={resetMatrix}>reset</button>
-      <button onClick={randomMatrix}>random</button>
-      <Matrix {...{
-        data: matrix,
-        onClick: handlePutNum,
-        isActive: true,
-      }} />
-      <div className={style.modal}>
+
+      {/* final */}
+      {!userList.findIndex(u => u.id === user.id) &&
+        <button
+          onClick={handleStartGame}
+          disabled={userList.some(({ percentage = 0 }) => percentage !== 1)}
+        >start!!!!</button>
+      }
+      <div>
+        <button onClick={setShowQRCode.bind(this, true)}>qr code</button>
+      </div>
+      <div className={cx(style.modal, {
+        [style.show]: showQRCode
+      })}>
+        <button onClick={setShowQRCode.bind(this, false)}>close</button>
         <canvas ref={canvasDOM} id="canvas" />
       </div>
     </div>

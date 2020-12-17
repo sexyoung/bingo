@@ -1,0 +1,81 @@
+@mixin btn {
+  border: none;
+  color: #fff;
+  margin: 0 auto;
+  font-size: 20px;
+  font-weight: bold;
+  border-radius: 5px;
+  background-color: rgba(#fff, .2);  
+}
+
+.HomePage {
+  text-align: center;
+  .slogan {
+    max-width: 360px;
+    margin: 30px auto 80px;
+    // border: 1px solid #fff;
+    .ballGroup {
+      display: flex;
+      position: relative;
+      justify-content: space-between;
+      .ball {
+        width: 50px;
+        height: 50px;
+        font-size: 30px;
+        font-weight: bold;
+        align-items: center;
+        border-radius: 100%;
+        display: inline-flex;
+        justify-content: center;
+        border: 5px solid #fff;
+      }
+      &:before {
+        top: 50%;
+        left: 50%;
+        height: 5px;
+        content: '';
+        border-radius: 5px;
+        position: absolute;
+        width: calc(100% + 20px);
+        background-color: #fff;
+        transform: translate(-50%, -50%) rotate(3.5deg);
+      }
+    }
+    .subTitle {
+      word-spacing: 10px;
+      margin-top: 20px;
+      text-align: center;
+    }
+  }
+
+  .menu {
+    width: 190px;
+    margin: 0 auto 20px;
+    .create {
+      @include btn;
+      padding: 16px 55px;
+    }
+  
+    .form {
+      display: flex;
+      input {
+        width: 90px;
+        padding: 16px 12px;
+        font-size: 20px;
+        border-width: 0;
+        border-top-right-radius: 0;
+        border-bottom-right-radius: 0;
+      }
+      button {
+        @include btn;
+        width: 80px;
+        padding: 16px;
+        border-top-left-radius: 0;
+        border-bottom-left-radius: 0;
+      }
+    }
+  }
+  .rule {
+    color: #fff;
+  }
+}

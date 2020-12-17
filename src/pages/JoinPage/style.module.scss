@@ -1,5 +1,8 @@
 .JoinPage {
   .modal {
     display: none;
+    &.show {
+      display: block;
+    }
   }
 }
