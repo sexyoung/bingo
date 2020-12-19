@@ -8,6 +8,9 @@ import { useRouteMatch } from "react-router-dom";
 
 import { User } from "class";
 import * as Page from "pages";
+
+import style from './style.module.scss';
+
 const { REACT_APP_SOCKET_URL: SocketURL } = process.env;
 
 export function RoomPage() {
@@ -20,7 +23,7 @@ export function RoomPage() {
   if(!user) return null;
 
   return (
-    <div classs="RoomPage">
+    <div className={style.RoomPage}>
       <Switch>
         <Route path={`${path}/join`}><Page.JoinPage {...{ user }} /></Route>
         <Route path={`${path}/game`}><Page.GamePage {...{ user }}  /></Route>

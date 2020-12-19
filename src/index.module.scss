@@ -5,6 +5,12 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  overflow: hidden;
+  & > div { // root
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+  }
 }
 
 code {
@@ -12,6 +18,9 @@ code {
 }
 
 html {
+  display: flex;
+  flex-direction: column;
+
   min-height: stretch;
   min-height: -webkit-fill-available;
 

@@ -27,7 +27,7 @@ export const RoomHandler = ({ io, socket }) => {
 
   socket.on(SocketEvent.Room.MessageSend, (room, message) => {
     io.to(room).emit(SocketEvent.Room.MessageUpdate, {
-      sender: UserManager.get({ socketID }).name,
+      user:  UserManager.get({ socketID }),
       text: message,
     });
   });

@@ -1,8 +1,10 @@
 .BingoMatrix {
   width: 250px;
-  background-color: lighten(#ff0, 40%);
+  color: #999;
+  // background-color: lighten(#ff0, 40%);
   &.active {
-    background-color: #ff0;
+    color: #fff;
+    // background-color: #ff0;
     .box:hover {
       cursor: pointer;
       border-radius: 3px;
