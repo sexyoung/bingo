@@ -8,12 +8,12 @@ body {
 }
 
 code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-    monospace;
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New', monospace;
 }
 
 html {
-  min-height: fill-available;
+  min-height: stretch;
+  min-height: -webkit-fill-available;
 
   // 這邊會分日夜版
   color: #fff;
