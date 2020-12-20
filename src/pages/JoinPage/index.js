@@ -1,5 +1,4 @@
 import cx from 'classnames';
-import { useState } from "react";
 
 import { Matrix } from "components";
 import { useEvent } from './useEvent';
@@ -7,13 +6,6 @@ import { useEvent } from './useEvent';
 import style from "./style.module.scss";
 
 export function JoinPage({ user }) {
-  const [show, setShow] = useState("");
-  const toggleShow = block => {
-    setShow(
-      show === block ? "": block
-    );
-  };
-
   const {
     NameDOM,
     InputDOM,
@@ -24,26 +16,26 @@ export function JoinPage({ user }) {
   return (
     <div className={style.JoinPage}>
       <div className={style.header}>
-        <div className={style.qrcode} onClick={toggleShow.bind(this, 'qrcode')} />
-        <div className={style.playerCount} onClick={toggleShow.bind(this, 'player')}>
+        <div className={style.qrcode} onClick={event.toggleShow.bind(this, 'qrcode')} />
+        <div className={style.playerCount} onClick={event.toggleShow.bind(this, 'player')}>
           {event.userList.length} Player
         </div>
         <div className={style.fit} />
-        <div className={style.userName} onClick={toggleShow.bind(this, 'rename')}>
+        <div className={style.userName} onClick={event.toggleShow.bind(this, 'rename')}>
           {user.name}
         </div>
-        <div className={style.matrix} onClick={toggleShow.bind(this, 'editor')}/>
+        <div className={style.matrix} onClick={event.toggleShow.bind(this, 'editor')}/>
       </div>
 
       <div className={style.content}>
         <div className={cx([style.chat], {
-          [style.show]: show === ''
+          [style.show]: event.show === ''
         })}>
           {ChatHistoryDOM}
         </div>
         {/* 線上玩家 */}
         <div className={cx([style.player], {
-          [style.show]: show === 'player'
+          [style.show]: event.show === 'player'
         })}>
           {event.userList.map((user, index) =>
             <div key={user.id}>
@@ -60,7 +52,7 @@ export function JoinPage({ user }) {
 
         {/* 改名 */}
         <div className={cx([style.rename], {
-          [style.show]: show === 'rename'
+          [style.show]: event.show === 'rename'
         })}>
           <form onSubmit={event.handleRename}>
             <strong>name: </strong>
@@ -71,7 +63,7 @@ export function JoinPage({ user }) {
 
         {/* 表格 */}
         <div className={cx([style.editor], {
-          [style.show]: show === 'editor'
+          [style.show]: event.show === 'editor'
         })}>
           <button onClick={event.resetMatrix}>reset</button>
           <button onClick={event.randomMatrix}>random</button>
@@ -83,9 +75,9 @@ export function JoinPage({ user }) {
         </div>
 
         <div className={cx([style.qrcode], {
-          [style.show]: show === 'qrcode'
+          [style.show]: event.show === 'qrcode'
         })}>
-          <button onClick={setShow.bind(this, "")}>close</button>
+          <button onClick={event.toggleShow.bind(this, 'qrcode')}>close</button>
           {event.CanvasDOM}
         </div>
 

@@ -20,6 +20,7 @@ export const useEvent = (user) => {
   const history = useHistory();
   const { room } = useParams();
   const [size, setSize] = useState(5);
+  const [show, setShow] = useState("");
   const [userList, setUserList] = useState([]);
   const [chatHistory, setChatHistory] = useState([]);
   const [ matrix, setMatrix ] = useState(
@@ -98,6 +99,13 @@ export const useEvent = (user) => {
     e.preventDefault();
     user.send(room, inputDOM.current.value);
     inputDOM.current.value = '';
+    setShow('');
+  };
+
+  const toggleShow = block => {
+    setShow(
+      show === block ? "": block
+    );
   };
 
   const handleRename = e => {
@@ -125,6 +133,7 @@ export const useEvent = (user) => {
   };
 
   return {
+    show,
     size,
     matrix,
     userList,
@@ -138,6 +147,7 @@ export const useEvent = (user) => {
     resetMatrix,
     randomMatrix,
     handlePutNum,
+    toggleShow,
 
     CanvasDOM: <canvas ref={canvasDOM} id="canvas" />,
     NameDOM: <input type="text" defaultValue={user.name} ref={nameDOM} />,
