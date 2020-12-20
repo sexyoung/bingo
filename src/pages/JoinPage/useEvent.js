@@ -1,3 +1,4 @@
+import qrcode from 'qrcode';
 import cx from "classnames";
 import { useParams, useHistory } from "react-router-dom";
 import { useLayoutEffect, createRef, useState, useEffect } from "react";
@@ -12,6 +13,7 @@ let num = 0;
 export const useEvent = (user) => {
   const nameDOM = createRef();
   const inputDOM = createRef();
+  const canvasDOM = createRef();
   const chatHistoryDOM = createRef([
     {sender: 'sexyoung', text: '我說那個誰是不是有點慢啊'}
   ]);
@@ -48,6 +50,11 @@ export const useEvent = (user) => {
 
     user.join(room);
 
+    qrcode.toCanvas(canvasDOM.current, `${location.origin}/#/${room}/join`, error => {
+      if (error) console.error(error);
+      console.log('QR success!');
+    });
+
     const PlayerUpdate = socketList => setUserList(socketList.filter(v => v));
     const MessageUpdate = message => setChatHistory(chatHistory => [ ...chatHistory, message ]);
     const Denied = () => {
@@ -72,7 +79,7 @@ export const useEvent = (user) => {
     // 開始遊戲！
     user.socket.on(SocketEvent.Room.StartGame, StartGame);
 
-    // randomMatrix();
+    randomMatrix();
 
     return () => {
       user.socket.off(SocketEvent.Room.Denied, Denied);
@@ -132,6 +139,7 @@ export const useEvent = (user) => {
     randomMatrix,
     handlePutNum,
 
+    CanvasDOM: <canvas ref={canvasDOM} id="canvas" />,
     NameDOM: <input type="text" defaultValue={user.name} ref={nameDOM} />,
     InputDOM: <input type="text" ref={inputDOM} placeholder="輸入訊息" />,
     ChatHistoryDOM: (

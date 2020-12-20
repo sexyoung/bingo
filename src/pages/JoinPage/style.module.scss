@@ -40,6 +40,12 @@
     padding: 10px 20px;
     position: absolute;
     box-sizing: border-box;
+    > * {
+      display: none;
+      &.show {
+        display: block;
+      }
+    }
     .chatHistory {
       overflow: auto;
       max-height: 100%;

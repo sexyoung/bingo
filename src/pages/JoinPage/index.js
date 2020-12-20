@@ -1,7 +1,5 @@
-import qrcode from 'qrcode';
 import cx from 'classnames';
-import { useParams } from "react-router-dom";
-import { useState, useLayoutEffect, createRef } from "react";
+import { useState } from "react";
 
 import { Matrix } from "components";
 import { useEvent } from './useEvent';
@@ -9,16 +7,12 @@ import { useEvent } from './useEvent';
 import style from "./style.module.scss";
 
 export function JoinPage({ user }) {
-  const { room } = useParams();
-  const canvasDOM = createRef();
-  const [showQRCode, setShowQRCode] = useState(false);
-
-  useLayoutEffect(() => {
-    qrcode.toCanvas(canvasDOM.current, `${location.origin}/#/${room}/join`, error => {
-      if (error) console.error(error);
-      console.log('QR success!');
-    });
-  }, []);
+  const [show, setShow] = useState("");
+  const toggleShow = block => {
+    setShow(
+      show === block ? "": block
+    );
+  };
 
   const {
     NameDOM,
@@ -30,22 +24,27 @@ export function JoinPage({ user }) {
   return (
     <div className={style.JoinPage}>
       <div className={style.header}>
-        <div className={style.qrcode} onClick={setShowQRCode.bind(this, true)} />
-        <div className={style.playerCount}>
-          {event.userList.length}人在線
+        <div className={style.qrcode} onClick={toggleShow.bind(this, 'qrcode')} />
+        <div className={style.playerCount} onClick={toggleShow.bind(this, 'player')}>
+          {event.userList.length} Player
         </div>
         <div className={style.fit} />
-        <div className={style.userName}>
+        <div className={style.userName} onClick={toggleShow.bind(this, 'rename')}>
           {user.name}
         </div>
-        <div className={style.matrix} />
+        <div className={style.matrix} onClick={toggleShow.bind(this, 'editor')}/>
       </div>
 
       <div className={style.content}>
-        {ChatHistoryDOM}
-
-        {/* step 3 */}
-        <div className={style.modal}>
+        <div className={cx([style.chat], {
+          [style.show]: show === ''
+        })}>
+          {ChatHistoryDOM}
+        </div>
+        {/* 線上玩家 */}
+        <div className={cx([style.player], {
+          [style.show]: show === 'player'
+        })}>
           {event.userList.map((user, index) =>
             <div key={user.id}>
               {(user.percentage ?? 0) < 1 ?
@@ -59,8 +58,10 @@ export function JoinPage({ user }) {
           )}
         </div>
 
-        {/* step 1 */}
-        <div className={style.modal}>
+        {/* 改名 */}
+        <div className={cx([style.rename], {
+          [style.show]: show === 'rename'
+        })}>
           <form onSubmit={event.handleRename}>
             <strong>name: </strong>
             {NameDOM}
@@ -68,8 +69,10 @@ export function JoinPage({ user }) {
           </form>
         </div>
 
-        {/* step 2 */}
-        <div className={style.modal}>
+        {/* 表格 */}
+        <div className={cx([style.editor], {
+          [style.show]: show === 'editor'
+        })}>
           <button onClick={event.resetMatrix}>reset</button>
           <button onClick={event.randomMatrix}>random</button>
           <Matrix {...{
@@ -79,11 +82,11 @@ export function JoinPage({ user }) {
           }} />
         </div>
 
-        <div className={cx(style.modal, {
-          [style.show]: showQRCode
+        <div className={cx([style.qrcode], {
+          [style.show]: show === 'qrcode'
         })}>
-          <button onClick={setShowQRCode.bind(this, false)}>close</button>
-          <canvas ref={canvasDOM} id="canvas" />
+          <button onClick={setShow.bind(this, "")}>close</button>
+          {event.CanvasDOM}
         </div>
 
       </div>
