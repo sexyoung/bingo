@@ -36,21 +36,23 @@ export function JoinPage({ user }) {
           {ChatHistoryDOM}
         </div>
         {/* 線上玩家 */}
-        <div className={cx([style.playerPane], {
+        <ul className={cx([style.playerPane], {
           [style.show]: event.show === 'player'
         })}>
           {event.userList.map((user, index) =>
-            <div key={user.id}>
-              {(user.percentage ?? 0) < 1 ?
-                <span>{~~(user.percentage * 100)}%</span>:
-                <span>Ready!!!</span>
-              }
-            /
-              {user.name}
-              {!index && <span>← start button here</span>}
-            </div>
+            <li key={user.id}>
+              <div className={style.name}>{user.name}</div>
+              <div className={cx(style.percentage, {
+                [style.fin]: user.percentage === 1
+              })}>
+                <div
+                  className={style.bar}
+                  style={{ width: `${~~(user.percentage * 100)}%`}}
+                />
+              </div>
+            </li>
           )}
-        </div>
+        </ul>
 
         {/* 改名 */}
         <div className={cx([style.renamePane], {
@@ -80,10 +82,7 @@ export function JoinPage({ user }) {
           [style.show]: event.show === 'qrcode'
         })}>
           <img src={event.qrcode64} width="100%" />
-          {/* <button onClick={event.toggleShow.bind(this, 'qrcode')}>close</button> */}
-          <div className={style.roomID}>
-            {room}
-          </div>
+          <div className={style.roomID}>{room}</div>
           <div className={style.link} onClick={event.handleCopyLink}>
             Copy the Link
           </div>

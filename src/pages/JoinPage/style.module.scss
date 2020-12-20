@@ -46,6 +46,47 @@
       &.show {
         display: block;
       }
+      &.playerPane {
+        margin: 0;
+        padding: 0;
+        list-style: none;
+        li {
+          display: flex;
+          margin-bottom: 5px;
+          & > * {
+            align-items: center;
+          }
+          .name {
+            width: 80px;
+            text-align: right;
+            margin-right: 10px;
+          }
+          .percentage {
+            flex: 1;
+            display: flex;
+            .bar {
+              height: 5px;
+              border-radius: 3px;
+              transition: width .15s;
+              background-color: #c2d693;
+            }
+            &.fin {
+              display: flex;
+              align-items: center;
+              .bar {
+                flex: 1;
+                background-color: #93d698;
+              }
+              &:before {
+                font-size: 1rem;
+                transform: scale(.6);
+                content: 'READY';
+                margin-right: 5px;
+              }
+            }
+          }
+        }
+      }
       &.qrcodePane {
         text-align: center;
         .roomID {
