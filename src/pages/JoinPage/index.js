@@ -59,9 +59,8 @@ export function JoinPage({ user }) {
           [style.show]: event.show === 'rename'
         })}>
           <form onSubmit={event.handleRename}>
-            <strong>name: </strong>
             {NameDOM}
-            <button>rename</button>
+            <button>Rename</button>
           </form>
         </div>
 
@@ -69,13 +68,15 @@ export function JoinPage({ user }) {
         <div className={cx([style.editorPane], {
           [style.show]: event.show === 'editor'
         })}>
-          <button onClick={event.resetMatrix}>reset</button>
-          <button onClick={event.randomMatrix}>random</button>
           <Matrix {...{
             data: event.matrix,
             onClick: event.handlePutNum,
             isActive: true,
           }} />
+          <div className={style.buttons}>
+            <button className={style.reset} onClick={event.resetMatrix}>RESET</button>
+            <button className={style.random} onClick={event.randomMatrix}>RANDOM</button>
+          </div>
         </div>
 
         <div className={cx([style.qrcodePane], {

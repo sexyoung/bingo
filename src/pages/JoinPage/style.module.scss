@@ -106,6 +106,69 @@
           background-color: #232244;
         }
       }
+      &.renamePane {
+        &.show {
+          display: flex;
+        }
+        align-items: center;
+        justify-content: center;
+        .name {
+          width: 100%;
+          border: none;
+          color: #fff;
+          outline: none;
+          font-size: 30px;
+          max-width: 250px;
+          padding: 10px 0;
+          text-align: center;
+          margin-bottom: 20px;
+          border-radius: 0;
+          border-bottom: 1px solid #fff;
+          background-color: transparent;
+        }
+        button {
+          width: 100%;
+          border: none;
+          color: #fff;
+          display: block;
+          font-size: 30px;
+          padding: 10px 0;
+          border-radius: 5px;
+          background-color: #232244;
+          &:focus {
+            outline: none;
+          }
+        }
+      }
+      &.editorPane {
+        &.show {
+          display: flex;
+        }
+        align-items: center;
+        flex-direction: column;
+        justify-content: center;
+        .buttons {
+          width: 100%;
+          display: flex;
+          margin-top: 20px;
+          button {
+            flex: 1;
+            border: none;
+            color: #fff;
+            margin: 0 10px;
+            padding: 10px 0;
+            font-size: 24px;
+            border-radius: 5px;
+            background-color: #232244;
+            &.reset {
+              background-color: #756182;
+            }
+            &.random {
+
+            }
+          }
+        }
+      }
     }
     .chatHistory {
       overflow: auto;

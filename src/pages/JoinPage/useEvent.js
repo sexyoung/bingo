@@ -107,6 +107,8 @@ export const useEvent = (user) => {
     user.send(room, inputDOM.current.value);
     inputDOM.current.value = '';
     setShow('');
+    // if mobile....
+    inputDOM.current.blur();
   };
 
   const toggleShow = block => {
@@ -117,7 +119,9 @@ export const useEvent = (user) => {
 
   const handleRename = e => {
     e.preventDefault();
+    if(!nameDOM.current.value) return;
     user.changeName(room, nameDOM.current.value);
+    setShow('');
   };
 
   const handleStartGame = () => {
@@ -171,7 +175,14 @@ export const useEvent = (user) => {
     handleCopyLink,
 
     CanvasDOM: <canvas ref={canvasDOM} id="canvas" className={style.qrcode} />,
-    NameDOM: <input type="text" defaultValue={user.name} ref={nameDOM} />,
+    NameDOM: <input
+      required
+      type="text"
+      ref={nameDOM}
+      className={style.name}
+      placeholder="your name"
+      defaultValue={user.name}
+    />,
     InputDOM: <input type="text" ref={inputDOM} placeholder="輸入訊息" />,
     ChatHistoryDOM: (
       <div className={style.chatHistory} ref={chatHistoryDOM}>
