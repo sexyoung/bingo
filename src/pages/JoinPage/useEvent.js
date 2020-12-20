@@ -21,6 +21,7 @@ export const useEvent = (user) => {
   const { room } = useParams();
   const [size, setSize] = useState(5);
   const [show, setShow] = useState("");
+  const [qrcode64, setQRCode64] = useState(null);
   const [userList, setUserList] = useState([]);
   const [chatHistory, setChatHistory] = useState([]);
   const [ matrix, setMatrix ] = useState(
@@ -51,10 +52,16 @@ export const useEvent = (user) => {
 
     user.join(room);
 
-    qrcode.toCanvas(canvasDOM.current, `${location.origin}/#/${room}/join`, error => {
-      if (error) console.error(error);
-      console.log('QR success!');
-    });
+    qrcode.toDataURL(
+      `${location.origin}/#/${room}/join`, {
+        width: 512,
+        height: 512,
+      },
+      (error, url) => {
+        if (error) return console.error(error);
+        setQRCode64(url);
+      }
+    );
 
     const PlayerUpdate = socketList => setUserList(socketList.filter(v => v));
     const MessageUpdate = message => setChatHistory(chatHistory => [ ...chatHistory, message ]);
@@ -132,10 +139,23 @@ export const useEvent = (user) => {
     matrixProcess(updateMatrix);
   };
 
+  const handleCopyLink = () => {
+    const dummy = document.createElement('input');
+    const text = window.location.href;
+
+    document.body.appendChild(dummy);
+    dummy.value = text;
+    dummy.select();
+    document.execCommand('copy');
+    document.body.removeChild(dummy);
+    alert('Copied!');
+  };
+
   return {
     show,
     size,
     matrix,
+    qrcode64,
     userList,
     chatHistory,
 
@@ -148,8 +168,9 @@ export const useEvent = (user) => {
     randomMatrix,
     handlePutNum,
     toggleShow,
+    handleCopyLink,
 
-    CanvasDOM: <canvas ref={canvasDOM} id="canvas" />,
+    CanvasDOM: <canvas ref={canvasDOM} id="canvas" className={style.qrcode} />,
     NameDOM: <input type="text" defaultValue={user.name} ref={nameDOM} />,
     InputDOM: <input type="text" ref={inputDOM} placeholder="輸入訊息" />,
     ChatHistoryDOM: (

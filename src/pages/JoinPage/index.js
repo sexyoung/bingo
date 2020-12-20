@@ -1,5 +1,5 @@
 import cx from 'classnames';
-
+import { useParams } from "react-router-dom";
 import { Matrix } from "components";
 import { useEvent } from './useEvent';
 
@@ -12,6 +12,8 @@ export function JoinPage({ user }) {
     ChatHistoryDOM,
     ...event
   } = useEvent(user);
+
+  const { room } = useParams();
 
   return (
     <div className={style.JoinPage}>
@@ -28,13 +30,13 @@ export function JoinPage({ user }) {
       </div>
 
       <div className={style.content}>
-        <div className={cx([style.chat], {
+        <div className={cx([style.chatPane], {
           [style.show]: event.show === ''
         })}>
           {ChatHistoryDOM}
         </div>
         {/* 線上玩家 */}
-        <div className={cx([style.player], {
+        <div className={cx([style.playerPane], {
           [style.show]: event.show === 'player'
         })}>
           {event.userList.map((user, index) =>
@@ -51,7 +53,7 @@ export function JoinPage({ user }) {
         </div>
 
         {/* 改名 */}
-        <div className={cx([style.rename], {
+        <div className={cx([style.renamePane], {
           [style.show]: event.show === 'rename'
         })}>
           <form onSubmit={event.handleRename}>
@@ -62,7 +64,7 @@ export function JoinPage({ user }) {
         </div>
 
         {/* 表格 */}
-        <div className={cx([style.editor], {
+        <div className={cx([style.editorPane], {
           [style.show]: event.show === 'editor'
         })}>
           <button onClick={event.resetMatrix}>reset</button>
@@ -74,11 +76,17 @@ export function JoinPage({ user }) {
           }} />
         </div>
 
-        <div className={cx([style.qrcode], {
+        <div className={cx([style.qrcodePane], {
           [style.show]: event.show === 'qrcode'
         })}>
-          <button onClick={event.toggleShow.bind(this, 'qrcode')}>close</button>
-          {event.CanvasDOM}
+          <img src={event.qrcode64} width="100%" />
+          {/* <button onClick={event.toggleShow.bind(this, 'qrcode')}>close</button> */}
+          <div className={style.roomID}>
+            {room}
+          </div>
+          <div className={style.link} onClick={event.handleCopyLink}>
+            Copy the Link
+          </div>
         </div>
 
       </div>
