@@ -3,6 +3,8 @@ import cx from "classnames";
 import { useParams, useHistory } from "react-router-dom";
 import { useLayoutEffect, createRef, useState, useEffect } from "react";
 
+const { REACT_APP_SOCKET_URL: SocketURL } = process.env;
+
 import { SocketEvent } from "const";
 
 import style from "./style.module.scss";
@@ -14,9 +16,7 @@ export const useEvent = (user) => {
   const nameDOM = createRef();
   const inputDOM = createRef();
   const canvasDOM = createRef();
-  const chatHistoryDOM = createRef([
-    {sender: 'sexyoung', text: '我說那個誰是不是有點慢啊'}
-  ]);
+  const chatHistoryDOM = createRef([]);
   const history = useHistory();
   const { room } = useParams();
   const [size, setSize] = useState(5);
@@ -53,7 +53,7 @@ export const useEvent = (user) => {
     user.join(room);
 
     qrcode.toDataURL(
-      `${location.origin}/#/${room}/join`, {
+      `${SocketURL}/#/${room}/join`, {
         width: 512,
         height: 512,
       },
