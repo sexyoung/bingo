@@ -3,8 +3,6 @@ import cx from "classnames";
 import { useParams, useHistory } from "react-router-dom";
 import { useLayoutEffect, createRef, useState, useEffect } from "react";
 
-const { REACT_APP_SOCKET_URL: SocketURL } = process.env;
-
 import { SocketEvent } from "const";
 
 import style from "./style.module.scss";
@@ -53,7 +51,7 @@ export const useEvent = (user) => {
     user.join(room);
 
     qrcode.toDataURL(
-      `${SocketURL}/#/${room}/join`, {
+      `${location.origin + location.pathname}/#/${room}/join`, {
         width: 512,
         height: 512,
       },
