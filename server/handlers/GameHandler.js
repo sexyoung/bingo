@@ -33,6 +33,7 @@ const getResponse = ({ game, checkedList }) => {
     idList[turnIndex].id,
     winCountList,
     winList,
+    winLine,
   ];
 };
 

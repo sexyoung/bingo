@@ -7,9 +7,20 @@ import {
   useHistory,
 } from "react-router-dom";
 
+import style from './style.module.scss';
+
+let winLine = 0;
+let winList = [];
 let checkedList = [];
 let plyerInfoList = [];
-let winList = [];
+
+const nameColor = name => {
+  const num = +name.split('').map(s => s.charCodeAt()).join('');
+  const r = (~~(num / 23)) % 256;
+  const g = (~~(num / 24)) % 256;
+  const b = (~~(num / 25)) % 256;
+  return `rgba(${r}, ${g}, ${b}, .25)`;
+};
 
 export function GamePage({ user }) {
   const { room } = useParams();
@@ -21,16 +32,17 @@ export function GamePage({ user }) {
       history.push('/denied');
     };
 
-    const UpdateChecked = (newCheckedList, newTurnID, newPlyerInfoList, newWinList = []) => {
+    const UpdateChecked = (newCheckedList, newTurnID, newPlyerInfoList, newWinList = [], newWinLine) => {
       checkedList = newCheckedList;
       plyerInfoList = newPlyerInfoList;
       winList = newWinList;
+      winLine = newWinLine;
       setTurnID(newTurnID);
     };
 
-    const SelfMatrix = (matrix, newCheckedList, newTurnID, newPlyerInfoList, newWinList = []) => {
+    const SelfMatrix = (matrix, newCheckedList, newTurnID, newPlyerInfoList, newWinList = [], newWinLine) => {
       user.matrix = matrix;
-      UpdateChecked(newCheckedList, newTurnID, newPlyerInfoList, newWinList);
+      UpdateChecked(newCheckedList, newTurnID, newPlyerInfoList, newWinList, newWinLine);
     };
 
     // 如果使用者重整的話，並且立馬停止監聽
@@ -83,31 +95,64 @@ export function GamePage({ user }) {
     user.replay(room);
   };
 
+  // winLine = 5;
+  // plyerInfoList = [
+  //   {name: '謝', winCount: ~~(Math.random() * 6)},
+  //   {name: 'def', winCount: ~~(Math.random() * 6)},
+  // ];
+  // winList = ['sexyoung', 'kelly']; // test
+  // console.warn(Boolean(winList.length)); // test
+  // user.matrix = [...Array(25).keys()]; // test
+
   if(!user.matrix?.length) return null;
   return (
-    <div>
-      <h2>GamePage</h2>
-      {Boolean(winList.length) &&
-        <div>
-          <h2>Result</h2>
-          {winList.map((name, index) =>
-            <div key={index}>{name} WIN!</div>
+    <div className={style.GamePage}>
+      <div className={style.winMap}>
+        <div className={style.start}>0</div>
+        <div className={style.way}>
+          {plyerInfoList.map((playerInfo, index) =>
+            <div
+              key={index}
+              className={style.player}
+              style={{
+                zIndex: index,
+                left: `${100 * (playerInfo.winCount / winLine)}%`,
+              }}
+            >
+              <div
+                className={style.nameColor}
+                style={{
+                  backgroundColor: nameColor(playerInfo.name),
+                }}
+              />
+              {playerInfo.name.slice(0, 1)}
+            </div>
           )}
-          <div onClick={handleReplay}>Play again</div>
-          <Link to="/">Home</Link>
         </div>
-      }
+        <div className={style.end}>{winLine}</div>
+      </div>
+      <div className={style.gap}>
+        {
+          Boolean(winList.length) &&
+          <div className={style.result}>
+            <div className={style.winList}>
+              <div className={style.winnerIs}>Winner is</div>
+              <span>{winList.join(', ')}</span>
+            </div>
+            <div className={style.buttons}>
+              <div onClick={handleReplay}>Replay</div>
+              <Link to="/">Home</Link>
+            </div>
+          </div>
+        }
+      </div>
       <Matrix {...{
         checkedList,
         data: user.matrix,
         onClick: handleClick,
+        className: style.Matrix,
         isActive: turnID === user.id && !winList.length,
       }} />
-      {plyerInfoList.map((playerInfo, index) =>
-        <div key={index}>
-          {playerInfo.name}: {playerInfo.winCount}
-        </div>
-      )}
     </div>
   );
 }

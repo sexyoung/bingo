@@ -2,7 +2,13 @@ import cx from "classnames";
 
 import style from './style.module.scss';
 
-export function Matrix({ data, onClick, checkedList = [], isActive }) {
+export function Matrix({
+  data,
+  onClick,
+  isActive,
+  className = '',
+  checkedList = [],
+}) {
 
   const handleClick = index => {
     isActive && onClick(index);
@@ -11,6 +17,7 @@ export function Matrix({ data, onClick, checkedList = [], isActive }) {
   return (
     <div className={cx(style.BingoMatrix, {
       [style.active]: isActive,
+      [className]: Boolean(className),
     })}>
       {data.map((v, i) =>
         <div

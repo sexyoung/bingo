@@ -11,6 +11,7 @@
     "space-before-blocks": "error",
     "prefer-const": "error",
     "no-var": "error",
+    "no-use-before-define": "error",
     "react/self-closing-comp": "error",
     "spaced-comment": ["error", "always", { "block": { "balanced": true } }]
   }
