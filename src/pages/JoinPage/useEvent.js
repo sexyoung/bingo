@@ -51,7 +51,7 @@ export const useEvent = (user) => {
     user.join(room);
 
     qrcode.toDataURL(
-      `${location.origin + location.pathname}/#/${room}/join`, {
+      `${location.origin + location.pathname}/#/${room}/join`.replace('bingo//', 'bingo/'), {
         width: 512,
         height: 512,
       },
