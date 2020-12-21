@@ -37,7 +37,7 @@ class GameManager {
     GameList[room] = {
       size,
       idList,
-      winLine: 1,
+      winLine: size,
       turnIndex: 0,
       checkedList: [],
       winStr: genWinStr(size),
