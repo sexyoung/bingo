@@ -41,6 +41,29 @@ export const RoomHandler = ({ io, socket }) => {
     });
   });
 
+  const count = 3;
+  const RoomCount = {};
+  const RoomInterval = {};
+
+  socket.on(SocketEvent.Room.TriggerCountDown, room => {
+    RoomCount[room] = count;
+    io.in(room).emit(SocketEvent.Room.CountDown, RoomCount[room]);
+    RoomInterval[room] = setInterval(() => {
+      --RoomCount[room];
+      if(RoomCount[room] < 0) {
+        clearInterval(RoomInterval[room]);
+        io.in(room).emit(SocketEvent.Room.CountDownEnd);
+      } else {
+        io.in(room).emit(SocketEvent.Room.CountDown, RoomCount[room]);
+      }
+    }, 1000);
+  });
+
+  socket.on(SocketEvent.Room.CountDownCancel, room => {
+    clearInterval(RoomInterval[room]);
+    io.in(room).emit(SocketEvent.Room.CountDownStop);
+  });
+
   socket.on(SocketEvent.Room.TriggerStartGame, (room, size, winLine) => {
     GameManager.build({
       size,
@@ -48,6 +71,7 @@ export const RoomHandler = ({ io, socket }) => {
       winLine,
       sockets: [...io.sockets.adapter.rooms.get(room)],
     });
+
     io.in(room).emit(SocketEvent.Room.StartGame);
   });
 

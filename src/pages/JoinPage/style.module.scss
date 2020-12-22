@@ -247,10 +247,26 @@
     }
   }
 
-  .modal {
-    display: none;
-    &.show {
-      display: block;
+  .countdown {
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 1;
+    display: flex;
+    position: fixed;
+    font-size: 10rem;
+    align-items: center;
+    flex-direction: column;
+    justify-content: center;
+    background-color: rgba(#000, .6);
+    .stopBtn {
+      border: none;
+      color: #fff;
+      font-size: 2rem;
+      border-radius: 5px;
+      padding: 10px 20px;
+      background-color: #756182;
     }
   }
 }

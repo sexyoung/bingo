@@ -6,8 +6,13 @@ export const SocketEvent = {
     UpdateProcess: 'RoomUpdateProcess',
     MessageSend: 'RoomMessageSend',
     MessageUpdate: 'RoomMessageUpdate',
+    CountDown: 'RoomCountDown', // ← 遊戲開始前的倒數
+    CountDownStop: 'RoomCountDownStop',
+    CountDownEnd: 'RoomCountDownEnd',
+    CountDownCancel: 'RoomCountDownCancel',
     StartGame: 'RoomStartGame',
     SaveMatrix: 'RoomSaveMatrix',
+    TriggerCountDown: 'RoomTriggerCountDown',
     TriggerStartGame: 'RoomTriggerStartGame',
   },
   User: {

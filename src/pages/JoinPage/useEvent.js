@@ -13,14 +13,15 @@ let num = 0;
 export const useEvent = (user) => {
   const nameDOM = createRef();
   const inputDOM = createRef();
-  const canvasDOM = createRef();
-  const chatHistoryDOM = createRef([]);
   const history = useHistory();
   const { room } = useParams();
+  const canvasDOM = createRef();
   const [size, setSize] = useState(5);
+  const chatHistoryDOM = createRef([]);
   const [show, setShow] = useState("");
-  const [qrcode64, setQRCode64] = useState(null);
+  const [count, setCount] = useState(null);
   const [userList, setUserList] = useState([]);
+  const [qrcode64, setQRCode64] = useState(null);
   const [chatHistory, setChatHistory] = useState([]);
   const [ matrix, setMatrix ] = useState(
     Array(size ** 2).fill(0)
@@ -46,6 +47,10 @@ export const useEvent = (user) => {
     matrixProcess(updateMatrix);
   };
 
+  const handleStartGame = () => {
+    user.startGame(room, size, size);
+  };
+
   useLayoutEffect(() => {
 
     user.join(room);
@@ -67,6 +72,15 @@ export const useEvent = (user) => {
       // user.leave();
       // history.push('/denied');
     };
+
+    const CountDown = count => {
+      setCount(count);
+    };
+
+    const CountDownStop = () => {
+      setCount(null);
+    };
+
     const StartGame = () => {
       user.save();
       user.saveMatrix2Server(room, user.matrix);
@@ -82,16 +96,29 @@ export const useEvent = (user) => {
     // 訊息更新
     user.socket.on(SocketEvent.Room.MessageUpdate, MessageUpdate);
 
-    // 開始遊戲！
+    // 開始倒數遊戲！
+    user.socket.on(SocketEvent.Room.CountDown, CountDown);
+
+    // 取消倒數
+    user.socket.on(SocketEvent.Room.CountDownStop, CountDownStop);
+
+    // 倒數結束
+    user.socket.on(SocketEvent.Room.CountDownEnd, handleStartGame);
+
+    // 開始遊戲!
     user.socket.on(SocketEvent.Room.StartGame, StartGame);
 
     randomMatrix();
 
     return () => {
       user.socket.off(SocketEvent.Room.Denied, Denied);
-      user.socket.off(SocketEvent.Room.StartGame, StartGame);
+      user.socket.off(SocketEvent.Room.CountDown, CountDown);
       user.socket.off(SocketEvent.Room.PlayerUpdate, PlayerUpdate);
       user.socket.off(SocketEvent.Room.MessageUpdate, MessageUpdate);
+      user.socket.off(SocketEvent.Room.CountDown, CountDown);
+      user.socket.off(SocketEvent.Room.CountDownStop, CountDownStop);
+      user.socket.off(SocketEvent.Room.CountDownEnd, handleStartGame);
+      user.socket.off(SocketEvent.Room.StartGame, StartGame);
     };
   }, []);
 
@@ -122,9 +149,8 @@ export const useEvent = (user) => {
     setShow('');
   };
 
-  const handleStartGame = () => {
-    console.warn('satt');
-    user.startGame(room, size, size);
+  const handleStartCountDown = () => {
+    user.startCountDown(room);
   };
 
   const resetMatrix = () => {
@@ -153,9 +179,14 @@ export const useEvent = (user) => {
     alert('Copied!');
   };
 
+  const handleCountDownCancel = () => {
+    user.countDownCancel(room);
+  };
+
   return {
     show,
     size,
+    count,
     matrix,
     qrcode64,
     userList,
@@ -164,6 +195,7 @@ export const useEvent = (user) => {
     handleSubmit,
     handleRename,
     updateProcess,
+    handleStartCountDown,
     handleStartGame,
     matrixProcess,
     resetMatrix,
@@ -171,6 +203,7 @@ export const useEvent = (user) => {
     handlePutNum,
     toggleShow,
     handleCopyLink,
+    handleCountDownCancel,
 
     CanvasDOM: <canvas ref={canvasDOM} id="canvas" className={style.qrcode} />,
     NameDOM: <input

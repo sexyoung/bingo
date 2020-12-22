@@ -1,6 +1,7 @@
 import { SocketEvent } from "const";
 import { getRandomChar } from "utils";
 
+// TODO: 這邊有一些方法應集中到另一個 Class Room
 export class User {
   constructor(socket) {
     let user = localStorage.getItem('bingoUser');
@@ -72,8 +73,16 @@ export class User {
     this.socket.emit(SocketEvent.User.ChangeName, room, newName);
   }
 
+  startCountDown(room) {
+    this.socket.emit(SocketEvent.Room.TriggerCountDown, room);
+  }
+
   startGame(room, size, winLine) {
     this.socket.emit(SocketEvent.Room.TriggerStartGame, room, size, winLine);
+  }
+
+  countDownCancel(room) {
+    this.socket.emit(SocketEvent.Room.CountDownCancel, room);
   }
 
   saveMatrix2Server(room, matrix) {

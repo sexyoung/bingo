@@ -39,7 +39,7 @@ export function JoinPage({ user }) {
         <ul className={cx([style.playerPane], {
           [style.show]: event.show === 'player'
         })}>
-          {event.userList.map((user, index) =>
+          {event.userList.map(user =>
             <li key={user.id}>
               <div className={style.name}>{user.name}</div>
               <div className={cx(style.percentage, {
@@ -79,6 +79,7 @@ export function JoinPage({ user }) {
           </div>
         </div>
 
+        {/* qr code */}
         <div className={cx([style.qrcodePane], {
           [style.show]: event.show === 'qrcode'
         })}>
@@ -96,13 +97,20 @@ export function JoinPage({ user }) {
           <button
             type="button"
             className={style.startBtn}
-            onClick={event.handleStartGame}
+            onClick={event.handleStartCountDown}
             disabled={event.userList.some(({ percentage = 0 }) => percentage !== 1)}
           >Start</button>
         }
         {InputDOM}
         <button type="submit" className={style.sendBtn}>　</button>
       </form>
+
+      {event.count !== null &&
+          <div className={cx(style.countdown)}>
+            {event.count}
+            <button className={style.stopBtn} onClick={event.handleCountDownCancel}>CANCEL</button>
+          </div>
+      }
     </div>
   );
 }
