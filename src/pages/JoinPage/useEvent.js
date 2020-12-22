@@ -28,7 +28,7 @@ export const useEvent = (user) => {
   );
 
   const updateProcess = matrix => {
-    console.warn('updateProcess');
+    // console.warn('updateProcess');
     user.matrix = matrix;
     user.updateProcess(room, matrix.filter(v => v).length / (size ** 2));
   };
@@ -69,8 +69,8 @@ export const useEvent = (user) => {
     const PlayerUpdate = socketList => setUserList(socketList.filter(v => v));
     const MessageUpdate = message => setChatHistory(chatHistory => [ ...chatHistory, message ]);
     const Denied = () => {
-      // user.leave();
-      // history.push('/denied');
+      user.leave();
+      history.push('/denied');
     };
 
     const CountDown = count => {
@@ -123,7 +123,7 @@ export const useEvent = (user) => {
   }, []);
 
   useEffect(() => {
-    console.warn('do it');
+    // console.warn('do it');
     chatHistoryDOM.current.scrollTop = chatHistoryDOM.current.scrollHeight;
   }, [chatHistory.length]);
 

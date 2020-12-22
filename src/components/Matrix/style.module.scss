@@ -1,15 +1,11 @@
 $base: 70px;
 .BingoMatrix {
   width: $base * 5;
-  color: #999;
-  // background-color: lighten(#ff0, 40%);
+  color: rgba(#fff, .2);
   &.active {
     color: #fff;
-    // background-color: #ff0;
-    .box:hover {
-      cursor: pointer;
-      border-radius: 3px;
-      background-color: #cc0;
+    .box {
+      border: 1px solid rgba(#fff, .2);
     }
   }
   .box {
@@ -20,7 +16,7 @@ $base: 70px;
     display: inline-flex;
     justify-content: center;
     box-sizing: border-box;
-    border: 1px solid rgba(#fff, .1);
+    border: 1px solid rgba(#fff, .05);
     &.checked {
       position: relative;
       cursor: not-allowed;

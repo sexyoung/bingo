@@ -19,7 +19,7 @@ const nameColor = name => {
   const r = (~~(num / 23)) % 256;
   const g = (~~(num / 24)) % 256;
   const b = (~~(num / 25)) % 256;
-  return `rgba(${r}, ${g}, ${b}, .25)`;
+  return `rgba(${r}, ${g}, ${b}, .45)`;
 };
 
 export function GamePage({ user }) {
@@ -103,8 +103,10 @@ export function GamePage({ user }) {
   // winList = ['sexyoung', 'kelly']; // test
   // console.warn(Boolean(winList.length)); // test
   // user.matrix = [...Array(25).keys()]; // test
-
   if(!user.matrix?.length) return null;
+
+  const turnUser = plyerInfoList.find(({ id }) => id === turnID) || {};
+
   return (
     <div className={style.GamePage}>
       <div className={style.winMap}>
@@ -133,17 +135,28 @@ export function GamePage({ user }) {
       </div>
       <div className={style.gap}>
         {
-          Boolean(winList.length) &&
-          <div className={style.result}>
-            <div className={style.winList}>
-              <div className={style.winnerIs}>Winner is</div>
-              <span>{winList.join(', ')}</span>
+          Boolean(winList.length) ?
+            <div className={style.result}>
+              <div className={style.winList}>
+                <div className={style.winnerIs}>Winner is</div>
+                <span>{winList.join(', ')}</span>
+              </div>
+              <div className={style.buttons}>
+                <div onClick={handleReplay}>Replay</div>
+                <Link to="/">Home</Link>
+              </div>
+            </div>:
+            <div className={style.turn}>
+              <div className={style.title}>
+                {turnID === user.id ?
+                  <div className={style.your}>YOUR</div>:
+                  <div className={style.others}>
+                    {turnUser?.name}'s
+                  </div>
+                }
+                TURN
+              </div>
             </div>
-            <div className={style.buttons}>
-              <div onClick={handleReplay}>Replay</div>
-              <Link to="/">Home</Link>
-            </div>
-          </div>
         }
       </div>
       <Matrix {...{

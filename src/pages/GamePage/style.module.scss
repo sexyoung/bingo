@@ -96,11 +96,24 @@
         }
       }
     }
-  }
-  .Matrix {
-    // bottom: 0;
-    // left: 50%;
-    // position: absolute;
-    // transform: translateX(-50%);
+    .turn {
+      height: 100%;
+      display: flex;
+      align-items: center;
+      flex-direction: column;
+      justify-content: center;
+      .title {
+        font-size: 1.2rem;
+      }
+      .your {
+        font-size: 2rem;
+        font-weight: bold;
+        color: #c2d693;
+      }
+
+      .others {
+        
+      }
+    }
   }
 }
