@@ -214,7 +214,7 @@ export const useEvent = (user) => {
       placeholder="your name"
       defaultValue={user.name}
     />,
-    InputDOM: <input type="text" ref={inputDOM} placeholder="輸入訊息" />,
+    InputDOM: <input type="text" ref={inputDOM} placeholder="輸入訊息" required />,
     ChatHistoryDOM: (
       <div className={style.chatHistory} ref={chatHistoryDOM}>
         {chatHistory.map((msg, i) =>
