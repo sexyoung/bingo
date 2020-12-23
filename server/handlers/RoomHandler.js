@@ -3,6 +3,10 @@ import { SocketEvent } from "../../src/const";
 
 import UserManager from '../UserManager';
 
+const count = 3;
+const RoomCount = {};
+const RoomInterval = {};
+
 export const RoomHandler = ({ io, socket }) => {
   const socketID = socket.id;
   socket.on(SocketEvent.Room.PlayerJoin, (room, user) => {
@@ -40,10 +44,6 @@ export const RoomHandler = ({ io, socket }) => {
       sockets: [...io.sockets.adapter.rooms.get(room)]
     });
   });
-
-  const count = 3;
-  const RoomCount = {};
-  const RoomInterval = {};
 
   socket.on(SocketEvent.Room.TriggerCountDown, room => {
     RoomCount[room] = count;
