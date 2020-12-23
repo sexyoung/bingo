@@ -53,6 +53,7 @@ export const useEvent = (user) => {
 
   useLayoutEffect(() => {
 
+    // TODO: 應該納入 Room.addUser or User.join(room)
     user.join(room);
 
     qrcode.toDataURL(
