@@ -30,6 +30,8 @@ export const RoomHandler = ({ io, socket }) => {
   });
 
   socket.on(SocketEvent.Room.MessageSend, (room, message) => {
+    const user = UserManager.get({ socketID });
+    if(!user) return;
     io.to(room).emit(SocketEvent.Room.MessageUpdate, {
       user:  UserManager.get({ socketID }),
       text: message,
@@ -37,6 +39,8 @@ export const RoomHandler = ({ io, socket }) => {
   });
 
   socket.on(SocketEvent.Room.UpdateProcess, (room, percentage) => {
+    const user = UserManager.get({ socketID });
+    if(!user) return;
     UserManager.get({ socketID }).percentage = percentage;
     GameManager.updatePlayer({
       io,
@@ -77,6 +81,8 @@ export const RoomHandler = ({ io, socket }) => {
 
   // 把每個人的 matrix 暫存
   socket.on(SocketEvent.Room.SaveMatrix, (room, matrix) => {
+    const game = GameManager.get(room);
+    if(!game) return;
     const { idList } = GameManager.get(room);
     const index = idList.findIndex(user => user.id === UserManager.get({ socketID: socket.id }).id);
     idList[index].matrix = matrix;

@@ -41,10 +41,12 @@ const getResponse = ({ game, checkedList }) => {
 export const GameHandler = ({ io, socket }) => {
 
   socket.on(SocketEvent.Game.CheckNum, (room, num) => {
+    const game = GameManager.get(room);
+    if(!game) return;
     io.in(room).emit(
       SocketEvent.Game.UpdateChecked,
       ...getResponse({
-        game: GameManager.get(room),
+        game,
         checkedList: GameManager.checked(room, num),
       }),
     );
@@ -52,7 +54,8 @@ export const GameHandler = ({ io, socket }) => {
 
   socket.on(SocketEvent.Game.FetchMatrix, room => {
     const game = GameManager.get(room);
-    const { checkedList, idList } = game;
+    if(!game) return;
+    const { checkedList = [], idList = [] } = game;
     io.to(socket.id).emit(
       SocketEvent.Game.SelfMatrix,
       idList.find(({ id }) => UserManager.get({ socketID: socket.id }).id === id).matrix,
