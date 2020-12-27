@@ -13,10 +13,9 @@ const app = express();
 const server = http.createServer(app);
 const io = socketIO(server, {
   cors: {
-    origin: '*',
+    origin: 'https://sexyoung.github.io',
     // origin: [
-    //   "http://localhost:3000",
-    //   "http://172.20.10.2:3000",
+    //   "https://sexyoung.github.io/bingo",
     // ],
   }
 });
