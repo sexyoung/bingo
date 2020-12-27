@@ -80,7 +80,6 @@ export function GamePage({ user }) {
       user.socket.off(SocketEvent.Game.GoJoin, GoJoin);
       user.socket.off(SocketEvent.Room.Denied, Denied);
       user.socket.off(SocketEvent.Game.SelfMatrix, SelfMatrix);
-      user.socket.off(SocketEvent.Room.PlayerUpdate, fetchMatrix);
       user.socket.off(SocketEvent.Game.UpdateChecked, UpdateChecked);
     };
   }, []);
