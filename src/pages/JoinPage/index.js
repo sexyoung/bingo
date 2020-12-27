@@ -98,7 +98,7 @@ export function JoinPage({ user }) {
             type="button"
             className={style.startBtn}
             onClick={event.handleStartCountDown}
-            disabled={event.userList.some(({ percentage = 0 }) => percentage !== 1)}
+            disabled={event.userList.length <= 1 || event.userList.some(({ percentage = 0 }) => percentage !== 1)}
           >Start</button>
         }
         {InputDOM}
