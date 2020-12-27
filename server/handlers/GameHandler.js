@@ -56,6 +56,10 @@ export const GameHandler = ({ io, socket }) => {
     const game = GameManager.get(room);
     if(!game) return;
     const { checkedList = [], idList = [] } = game;
+    const user = idList.find(({ id }) => UserManager.get({ socketID: socket.id }).id === id);
+    if(!user) {
+      return console.log('===== user', idList, UserManager.all());
+    }
     io.to(socket.id).emit(
       SocketEvent.Game.SelfMatrix,
       idList.find(({ id }) => UserManager.get({ socketID: socket.id }).id === id).matrix,
