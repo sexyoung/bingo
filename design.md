@@ -3,16 +3,17 @@
 ## Room
 - name
 - user[]
-- game
-- status: waiting | gaming
-- addUser
-- newGame
+- game (if empty is not start)
+- `addUser`
+- `newGame`
 
 ## User
 - id
 - name
 - percentage (watting)
 - winCount (gaming)
+- room
+- matrix?
 
 ## Game
 - size

@@ -12,6 +12,7 @@
     "classnames": "^2.2.6",
     "express": "^4.17.1",
     "gh-pages": "^3.1.0",
+    "module-alias": "^2.2.2",
     "node-sass": "4",
     "qrcode": "^1.4.4",
     "react": "^17.0.1",
@@ -24,6 +25,7 @@
   },
   "scripts": {
     "commit": "cz",
+    "babel": "babel-node",
     "predeploy": "npm run build",
     "deploy": "gh-pages -d build",
     "start": "react-scripts start",
@@ -53,5 +55,9 @@
   "devDependencies": {
     "babel-core": "^6.26.3",
     "babel-preset-env": "^1.7.0"
+  },
+  "_moduleAliases": {
+    "@root": ".",
+    "@class": "class"
   }
 }
