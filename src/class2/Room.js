@@ -1,9 +1,12 @@
+import { Game } from "./Game";
+
 export class Room {
   #game;
   #name;
   #user = [];
 
   get user() { return this.#user; }
+  get game() { return this.#game; }
 
   constructor(name) {
     this.#name = name;
@@ -30,8 +33,12 @@ export class Room {
     ];
   }
 
-  newGame(game) {
-    this.#game = game;
+  newGame() {
+    this.#game = new Game(this);
     return true;
+  }
+
+  endGame() {
+    this.#game = undefined;
   }
 }
