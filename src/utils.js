@@ -12,3 +12,12 @@ export const getRandomChar = (len = 1) => {
   }
   return result;
 };
+
+export const makeID = (len = 32) => {
+  let result = '';
+  for (let i = 0; i < len; i++) {
+    result += getRandomChar();
+    if(i % 8 === 7) result += '-';
+  }
+  return result.slice(0, result.length - 1);
+};

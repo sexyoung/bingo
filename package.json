@@ -1,14 +1,12 @@
 {
   "name": "bingo",
   "version": "0.1.0",
-  "type": "module",
   "private": true,
   "homepage": "https://sexyoung.github.io/bingo",
   "dependencies": {
     "@testing-library/jest-dom": "^5.11.4",
     "@testing-library/react": "^11.1.0",
     "@testing-library/user-event": "^12.1.10",
-    "babel-cli": "^6.26.0",
     "classnames": "^2.2.6",
     "express": "^4.17.1",
     "gh-pages": "^3.1.0",
@@ -38,6 +36,9 @@
     "extends": [
       "react-app",
       "react-app/jest"
+    ],
+    "plugins": [
+      "classPrivateMethods"
     ]
   },
   "browserslist": {
@@ -53,11 +54,17 @@
     ]
   },
   "devDependencies": {
-    "babel-core": "^6.26.3",
-    "babel-preset-env": "^1.7.0"
+    "@babel/cli": "^7.12.10",
+    "@babel/core": "^7.12.10",
+    "@babel/node": "^7.12.10",
+    "@babel/plugin-proposal-class-properties": "^7.12.1",
+    "@babel/plugin-proposal-object-rest-spread": "^7.12.1",
+    "@babel/plugin-proposal-private-methods": "^7.12.1",
+    "@babel/plugin-proposal-private-property-in-object": "^7.12.1",
+    "@babel/preset-env": "^7.12.11"
   },
   "_moduleAliases": {
-    "@root": ".",
-    "@class": "class"
+    "utils": "src/utils",
+    "class": "src/class2"
   }
 }

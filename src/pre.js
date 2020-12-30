@@ -1,6 +1,4 @@
-import 'module-alias/register';
-
-import { Room, User } from "class";
+import { Room, User } from "class2";
 
 // create a new room
 const room = new Room('ABCD');
