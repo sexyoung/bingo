@@ -1,5 +1,11 @@
 export * from './Room';
-export * from './RoomFactory';
 export * from './User';
+
+export * from './JoinRoom';
+export * from './JoinUser';
+
+export * from './GameRoom';
+export * from './GameUser';
+
+export * from './RoomFactory';
 export * from './UserFactory';
-export * from './Game';

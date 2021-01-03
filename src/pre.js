@@ -1,33 +1,63 @@
-import { Room, User, Game } from "class2";
+import { JoinUser, JoinRoom } from "class2";
 
 console.clear();
 
 // create a new room
-const room = new Room('ABCD');
+let joinRoom = new JoinRoom({name: 'ABCD'});
+
+const size = 5;
+joinRoom.setSize(size);
+joinRoom.setWinLine(1);
 
 // create users
-const user1 = new User('sexyoung');
-const user2 = new User('kelly');
-const user3 = new User('300');
-const user4 = new User('空貓');
+const user1 = new JoinUser({ name: 'sexyoung' });
+const user2 = new JoinUser({ name: 'kelly' });
+const user3 = new JoinUser({ name: '300' });
+const user4 = new JoinUser({ name: '空貓' });
 
 // invite users to room
-room.invite(user1);
-room.invite(user2);
-room.invite(user3);
-room.invite(user4);
+joinRoom.invite(user1);
+joinRoom.invite(user2);
+joinRoom.invite(user3);
+joinRoom.invite(user4);
 
-console.warn(room.user.map(({ name }) => name));
+// console.warn(joinRoom.user.map(({ name }) => name));
 
 // kick out a someone
-room.kick(user3);
+joinRoom.kick(user3);
+// console.warn(joinRoom);
 
-console.warn(room.user.map(({ name }) => name));
+user1.setMatrix([...Array(size ** 2).keys()].map(v => v + 1));
 
 // create game
-room.newGame();
-console.warn(room.game);
+let gameRoom = joinRoom.start();
 
+console.warn(gameRoom);
+gameRoom.checked(1);
+gameRoom.checked(2);
+gameRoom.checked(3);
+gameRoom.checked(4);
+gameRoom.checked(5); // end
+
+// gameRoom.restart();
+// console.warn(gameRoom);
+
+console.warn('=== back ready ===');
+joinRoom = gameRoom.backReady();
+console.warn(joinRoom);
+joinRoom.user[0].setMatrix([...Array(size ** 2).keys()].map(v => v + 1));
+
+console.warn('=== start game ===');
+gameRoom = joinRoom.start();
+gameRoom.checked(1);
+gameRoom.checked(2);
+gameRoom.checked(3);
+gameRoom.checked(4);
+gameRoom.checked(5);
+console.warn(gameRoom);
 // end game
-room.endGame();
-console.warn(room.game);
+// game.end();
+// console.warn(game);
+
+
+// const room2 = new JoinRoom('XYZ1');
