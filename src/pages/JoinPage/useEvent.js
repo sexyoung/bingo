@@ -3,6 +3,7 @@ import cx from "classnames";
 import { useParams, useHistory } from "react-router-dom";
 import { useLayoutEffect, createRef, useState, useEffect } from "react";
 
+import { makeID } from "utils";
 import { SocketEvent } from "const";
 
 import style from "./style.module.scss";
@@ -10,7 +11,7 @@ import style from "./style.module.scss";
 let num = 0;
 
 /** 這邊看起來還是有點亂，想一下怎麼改 */
-export const useEvent = (user) => {
+export const useEvent = socket => {
   const nameDOM = createRef();
   const inputDOM = createRef();
   const history = useHistory();
@@ -54,7 +55,14 @@ export const useEvent = (user) => {
   useLayoutEffect(() => {
 
     // TODO: 應該納入 Room.addUser or User.join(room)
-    user.join(room);
+    // user.join(room);
+    const bingoUserID = localStorage.getItem('bingoUserID') || makeID();
+    localStorage.setItem('bingoUserID', bingoUserID);
+    socket.emit(
+      SocketEvent.JoinRoom.InviteUserRequest,
+      room,
+      bingoUserID,
+    );
 
     qrcode.toDataURL(
       `${location.origin + location.pathname}/#/${room}/join`.replace('bingo//', 'bingo/'), {
@@ -89,37 +97,38 @@ export const useEvent = (user) => {
     };
 
     // 拒絕進入，導頁
-    user.socket.on(SocketEvent.Room.Denied, Denied);
+    socket.on(SocketEvent.Room.Denied, Denied);
 
     // 使用者更新
-    user.socket.on(SocketEvent.Room.PlayerUpdate, PlayerUpdate);
+    socket.on(SocketEvent.JoinRoom.InviteUserResponse, PlayerUpdate);
+    // socket.on(SocketEvent.Room.PlayerUpdate, PlayerUpdate);
 
     // 訊息更新
-    user.socket.on(SocketEvent.Room.MessageUpdate, MessageUpdate);
+    socket.on(SocketEvent.Room.MessageUpdate, MessageUpdate);
 
     // 開始倒數遊戲！
-    user.socket.on(SocketEvent.Room.CountDown, CountDown);
+    socket.on(SocketEvent.Room.CountDown, CountDown);
 
     // 取消倒數
-    user.socket.on(SocketEvent.Room.CountDownStop, CountDownStop);
+    socket.on(SocketEvent.Room.CountDownStop, CountDownStop);
 
     // 倒數結束
-    user.socket.on(SocketEvent.Room.CountDownEnd, handleStartGame);
+    socket.on(SocketEvent.Room.CountDownEnd, handleStartGame);
 
     // 開始遊戲!
-    user.socket.on(SocketEvent.Room.StartGame, StartGame);
+    socket.on(SocketEvent.Room.StartGame, StartGame);
 
-    randomMatrix();
+    // randomMatrix();
 
     return () => {
-      user.socket.off(SocketEvent.Room.Denied, Denied);
-      user.socket.off(SocketEvent.Room.CountDown, CountDown);
-      user.socket.off(SocketEvent.Room.PlayerUpdate, PlayerUpdate);
-      user.socket.off(SocketEvent.Room.MessageUpdate, MessageUpdate);
-      user.socket.off(SocketEvent.Room.CountDown, CountDown);
-      user.socket.off(SocketEvent.Room.CountDownStop, CountDownStop);
-      user.socket.off(SocketEvent.Room.CountDownEnd, handleStartGame);
-      user.socket.off(SocketEvent.Room.StartGame, StartGame);
+      socket.off(SocketEvent.Room.Denied, Denied);
+      socket.off(SocketEvent.Room.CountDown, CountDown);
+      socket.off(SocketEvent.Room.PlayerUpdate, PlayerUpdate);
+      socket.off(SocketEvent.Room.MessageUpdate, MessageUpdate);
+      socket.off(SocketEvent.Room.CountDown, CountDown);
+      socket.off(SocketEvent.Room.CountDownStop, CountDownStop);
+      socket.off(SocketEvent.Room.CountDownEnd, handleStartGame);
+      socket.off(SocketEvent.Room.StartGame, StartGame);
     };
   }, []);
 
@@ -213,7 +222,7 @@ export const useEvent = (user) => {
       ref={nameDOM}
       className={style.name}
       placeholder="your name"
-      defaultValue={user.name}
+      // defaultValue={user.name}
     />,
     InputDOM: <input type="text" ref={inputDOM} placeholder="輸入訊息" required />,
     ChatHistoryDOM: (

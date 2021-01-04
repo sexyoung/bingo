@@ -4,22 +4,28 @@ import { randMatrix } from 'utils';
 
 export class JoinRoom extends Room {
 
+  /** @deprecated */
   setSize(size) { this.size = size; }
+
+  /** @deprecated */
   setWinLine(winLine) { this.winLine = winLine; }
 
   invite(user) {
     if(!this.size) throw('not set size');
     if(!this.winLine) throw('not set winLine');
 
-    if(this.findUser(user)) return false;
+    if(this.findUser(user.id)) return false;
 
-    user.setMatrix(randMatrix(this.size));
+    if(!user.matrix.length) {
+      user.matrix = randMatrix(this.size);
+    }
+
     this.user.push(user);
     return true;
   }
 
-  kick(user) {
-    const index = this.user.findIndex(u => u === user);
+  kick(userID) {
+    const index = this.user.findIndex(u => u.id === userID);
     if(index === -1) return;
     this.user = [
       ...this.user.slice(0, index),

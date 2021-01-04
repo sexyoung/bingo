@@ -12,7 +12,7 @@ export class Room {
     this.winLine = winLine;
   }
 
-  findUser(user) {
-    return this.user.find(u => u === user);
+  findUser(userID) {
+    return this.user.find(u => u.id === userID);
   }
 }

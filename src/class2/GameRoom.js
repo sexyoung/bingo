@@ -66,7 +66,7 @@ export class GameRoom extends Room {
 
     this.user.forEach(user => {
       user.winCount = 0;
-      user.setMatrix(randMatrix(this.size));
+      user.matrix = randMatrix(this.size);
     });
   }
 }

@@ -1,13 +1,14 @@
 import 'module-alias/register';
 
-import fs from 'fs';
 import http from 'http';
 import cors from 'cors';
 import express from 'express';
 import socketIO from 'socket.io';
 
-import { getRandomChar } from "utils";
 import { JoinRoom } from "class";
+import { getRandomChar } from "utils";
+
+import { readFile, writeFile } from "./utils";
 
 import {
   RoomHandler,
@@ -34,7 +35,7 @@ app.get('/', (req, res) => {
 });
 
 app.get('/new-room', cors(corsOption), (req, res) => {
-  const dataRoom = JSON.parse(fs.readFileSync('./server/data/room.json'));
+  const dataRoom = readFile('room');
   let name;
   do {
     name = getRandomChar(4);
@@ -43,7 +44,7 @@ app.get('/new-room', cors(corsOption), (req, res) => {
   // 要小心重複
   const joinRoom = new JoinRoom({ name });
   dataRoom[name] = joinRoom;
-  fs.writeFileSync('./server/data/room.json', JSON.stringify(dataRoom));
+  writeFile('room', dataRoom);
   res.json(name);
 });
 

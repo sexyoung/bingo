@@ -24,10 +24,10 @@ joinRoom.invite(user4);
 // console.warn(joinRoom.user.map(({ name }) => name));
 
 // kick out a someone
-joinRoom.kick(user3);
+joinRoom.kick(user3.id);
 // console.warn(joinRoom);
 
-user1.setMatrix([...Array(size ** 2).keys()].map(v => v + 1));
+user1.matrix = [...Array(size ** 2).keys()].map(v => v + 1);
 
 // create game
 let gameRoom = joinRoom.start();
@@ -45,7 +45,7 @@ gameRoom.checked(5); // end
 console.warn('=== back ready ===');
 joinRoom = gameRoom.backReady();
 console.warn(joinRoom);
-joinRoom.user[0].setMatrix([...Array(size ** 2).keys()].map(v => v + 1));
+joinRoom.user[0].matrix = [...Array(size ** 2).keys()].map(v => v + 1);
 
 console.warn('=== start game ===');
 gameRoom = joinRoom.start();

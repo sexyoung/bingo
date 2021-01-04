@@ -5,13 +5,13 @@ import { useEvent } from './useEvent';
 
 import style from "./style.module.scss";
 
-export function JoinPage({ user }) {
+export function JoinPage({ socket }) {
   const {
     NameDOM,
     InputDOM,
     ChatHistoryDOM,
     ...event
-  } = useEvent(user);
+  } = useEvent(socket);
 
   const { room } = useParams();
 
@@ -24,7 +24,7 @@ export function JoinPage({ user }) {
         </div>
         <div className={style.fit} />
         <div className={style.userName} onClick={event.toggleShow.bind(this, 'rename')}>
-          {user.name}
+          {/* {user.name} */}
         </div>
         <div className={style.matrix} onClick={event.toggleShow.bind(this, 'editor')}/>
       </div>
@@ -40,7 +40,7 @@ export function JoinPage({ user }) {
           [style.show]: event.show === 'player'
         })}>
           {event.userList.map(user =>
-            <li key={user.id}>
+          {/* <li key={user.id}>
               <div className={style.name}>{user.name}</div>
               <div className={cx(style.percentage, {
                 [style.fin]: user.percentage === 1
@@ -50,7 +50,7 @@ export function JoinPage({ user }) {
                   style={{ width: `${~~(user.percentage * 100)}%`}}
                 />
               </div>
-            </li>
+            </li> */}
           )}
         </ul>
 
@@ -93,14 +93,14 @@ export function JoinPage({ user }) {
       </div>
 
       <form className={style.sendMsgBar} onSubmit={event.handleSubmit}>
-        {!event.userList.findIndex(u => u.id === user.id) &&
+        {/* {!event.userList.findIndex(u => u.id === user.id) &&
           <button
             type="button"
             className={style.startBtn}
             onClick={event.handleStartCountDown}
             disabled={event.userList.length <= 1 || event.userList.some(({ percentage = 0 }) => percentage !== 1)}
           >Start</button>
-        }
+        } */}
         {InputDOM}
         <button type="submit" className={style.sendBtn}>　</button>
       </form>

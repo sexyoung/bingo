@@ -15,6 +15,7 @@ export class User {
     console.warn(message);
   }
 
+  /** @deprecated */
   setMatrix(matrix) {
     this.matrix = matrix;
   }
