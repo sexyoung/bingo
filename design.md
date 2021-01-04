@@ -3,20 +3,31 @@
 ## Room
 - name
 - user[]
-- game (if empty is not start)
-- `addUser`
-- `newGame`
+- `sendMessage`
 
 ## User
 - id
 - name
-- percentage (watting)
-- winCount (gaming)
-- room
-- matrix?
+- matrix
+- `sendMessage`
 
-## Game
+### JoinRoom extends Room
+- `invite`
+- `kick`
+- `startGame`
+
+## JoinUser extends User
+- percentage (watting)
+- room
+
+## GameRoom extends Room
 - size
+- winStr
 - winLine
 - turnIndex
 - checkList
+- `checked`
+
+## GameUser extends User
+- winCount (gaming)
+- room

@@ -6,7 +6,7 @@ export class Room {
   winLine = 0;
   user = [];
 
-  constructor({ name, size, winLine }) {
+  constructor({ name, size = 5, winLine = 5 }) {
     this.name = name;
     this.size = size;
     this.winLine = winLine;

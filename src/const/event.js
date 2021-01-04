@@ -1,4 +1,8 @@
 export const SocketEvent = {
+  JoinRoom: {
+    NewRequest: 'JoinRoomNewRequest',
+    NewResponse: 'JoinRoomNewResponse',
+  },
   Room: {
     Denied: 'RoomDenied',
     PlayerJoin: 'RoomPlayerJoin',

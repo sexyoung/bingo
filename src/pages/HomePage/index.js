@@ -1,21 +1,26 @@
 import { useRef } from "react";
 import { useHistory, Link } from "react-router-dom";
 
-import { getRandomChar } from "utils";
-
 import style from './style.module.scss';
 
+const { REACT_APP_SOCKET_URL: SocketURL } = process.env;
+
 export function HomePage() {
-  const history = useHistory();
   const roomDOM = useRef();
+  const history = useHistory();
+
 
   const handleClick = () => {
-    history.replace(`/${getRandomChar(4)}/join`);
+    fetch(`${SocketURL}/new-room`)
+      .then(res => res.json())
+      .then(roomName => {
+        history.push(`/${roomName}/join`);
+      });
   };
 
   const handleSubmit = e => {
     e.preventDefault();
-    history.replace(`/${roomDOM.current.value}/join`);
+    history.push(`/${roomDOM.current.value}/join`);
   };
 
   return (
