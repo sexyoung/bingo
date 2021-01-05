@@ -14,7 +14,7 @@ export const JoinRoomHandler = ({ io, socket }) => {
 
     /** if user isn't in data, create it. */
     if(!dataUser[userID]) {
-      dataUser[userID] = new JoinUser({id: userID});
+      dataUser[userID] = new JoinUser({id: userID, socketID});
     }
 
     const user = dataUser[userID];

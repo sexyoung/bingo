@@ -1,8 +1,8 @@
 import { User } from "./User";
 
 export class JoinUser extends User {
-  constructor({ name, id }) {
-    super(name, id);
+  constructor({ name, id, socketID }) {
+    super(name, id, socketID);
   }
   // 要通知所有房間的人
   rename(name) {

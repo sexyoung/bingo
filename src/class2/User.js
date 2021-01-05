@@ -5,9 +5,10 @@ export class User {
   name;
   matrix = [];
 
-  constructor(name = 'Player', id = makeID()) {
+  constructor(name = 'Player', id = makeID(), socketID) {
     this.id = id;
     this.name = name;
+    this.socketID = socketID;
   }
 
   // 要通知所有房間的人
