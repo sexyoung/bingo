@@ -1,3 +1,4 @@
+/** @deprecated */
 import { User } from "./User";
 import { randMatrix } from 'utils';
 

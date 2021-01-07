@@ -5,5 +5,5 @@ export const readFile = file => {
 };
 
 export const writeFile = (file, content) => {
-  fs.writeFileSync(`./server/data/${file}.json`, JSON.stringify(content));
+  fs.writeFileSync(`./server/data/${file}.json`, JSON.stringify(content, null, 2));
 };

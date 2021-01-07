@@ -18,7 +18,7 @@ export const JoinRoomHandler = ({ io, socket }) => {
     }
 
     const user = dataUser[userID];
-    if(joinRoom.findUser(user.id)) {
+    if(joinRoom.existsUser(user.id)) {
       return io.to(socketID).emit(
         SocketEvent.Room.Denied
       );

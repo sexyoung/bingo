@@ -1,5 +1,6 @@
+/** @deprecated */
 import { Room } from "./Room";
-import { GameRoom } from "./GameRoom";
+import { GameRoom } from "./Game";
 import { randMatrix } from 'utils';
 
 export class JoinRoom extends Room {
@@ -14,18 +15,18 @@ export class JoinRoom extends Room {
     if(!this.size) throw('not set size');
     if(!this.winLine) throw('not set winLine');
 
-    if(this.findUser(user.id)) return false;
+    if(this.existsUser(user.id)) return false;
 
     if(!user.matrix.length) {
       user.matrix = randMatrix(this.size);
     }
 
-    this.user.push(user);
+    this.user.push(user.id);
     return true;
   }
 
   kick(userID) {
-    const index = this.user.findIndex(u => u.id === userID);
+    const index = this.user.findIndex(uid => uid === userID);
     if(index === -1) return;
     this.user = [
       ...this.user.slice(0, index),
@@ -37,6 +38,7 @@ export class JoinRoom extends Room {
     // 應檢查人數與size
     if(!this.size) throw('size');
     if(!this.user.length) throw('user');
+
     this.user.forEach(({ matrix }) => {
       if(matrix.length !== this.size ** 2) throw('matrix');
     });

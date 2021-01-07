@@ -1,0 +1,65 @@
+import { genWinStr, randMatrix } from 'utils';
+import { UserDepartment } from '.';
+
+export class Game {
+  winUsers = [];
+  turnIndex = 0; // player index?
+  checkedList = []; // number[]
+  constructor(size, room) {
+    this.room = room;
+    this.winStr = genWinStr(size);
+  }
+
+  checked(num) {
+    /**
+     * 影響所有玩家的matrix
+     * checkedList 也要新增
+     */
+    if(this.winUsers.length) return;
+
+    if(this.checkedList.includes(num)) {
+      throw('exists');
+    }
+
+    this.checkedList.push(num);
+
+    const users = this.room.user.map(UserDepartment.user.bind(UserDepartment));
+
+    users.forEach(user => {
+      user.updateWinCount({...this, ...this.room});
+    });
+
+    this.winUsers = users.filter(({ winCount }) => winCount >=  this.room.winLine);
+
+    if(this.winUsers.length) {
+      return this.end(this.winUsers);
+    }
+
+    console.warn(
+      `= emit = turnNext`,
+      users.map(({ id, name, winCount }) => ({
+        id,
+        name,
+        winCount,
+      }))
+    );
+
+    this.turnIndex = (this.turnIndex + 1) % this.room.user.length;
+  }
+
+  end() {
+    console.warn(`= emit = end`, this.winUsers);
+  }
+
+  restart() {
+    this.winUsers = [];
+    this.turnIndex = 0;
+    this.checkedList = [];
+
+    const users = this.room.user.map(UserDepartment.user.bind(UserDepartment));
+    users.forEach(user => {
+      user.winCount = 0;
+      user.matrix = randMatrix(this.room.size);
+    });
+  }
+}

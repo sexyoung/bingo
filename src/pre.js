@@ -1,63 +1,54 @@
-import { JoinUser, JoinRoom } from "class2";
+import { Room, UserDepartment, User } from "class2";
 
 console.clear();
 
 // create a new room
-let joinRoom = new JoinRoom({name: 'ABCD'});
+let room = new Room({name: 'ABCD'});
 
 const size = 5;
-joinRoom.setSize(size);
-joinRoom.setWinLine(1);
+room.size = size;
+room.winLine = 1;
 
 // create users
-const user1 = new JoinUser({ name: 'sexyoung' });
-const user2 = new JoinUser({ name: 'kelly' });
-const user3 = new JoinUser({ name: '300' });
-const user4 = new JoinUser({ name: '空貓' });
+const user1 = UserDepartment.new(new User({ name: 'sexyoung' }));
+const user2 = UserDepartment.new(new User({ name: 'kelly' }));
+const user3 = UserDepartment.new(new User({ name: '300' }));
+const user4 = UserDepartment.new(new User({ name: '空貓' }));
 
-// invite users to room
-joinRoom.invite(user1);
-joinRoom.invite(user2);
-joinRoom.invite(user3);
-joinRoom.invite(user4);
-
-// console.warn(joinRoom.user.map(({ name }) => name));
+// // invite users to room
+room.invite(user1);
+room.invite(user2);
+room.invite(user3);
+room.invite(user4);
 
 // kick out a someone
-joinRoom.kick(user3.id);
-// console.warn(joinRoom);
+room.kick(user3.id);
 
 user1.matrix = [...Array(size ** 2).keys()].map(v => v + 1);
 
 // create game
-let gameRoom = joinRoom.start();
+room.start();
 
-console.warn(gameRoom);
-gameRoom.checked(1);
-gameRoom.checked(2);
-gameRoom.checked(3);
-gameRoom.checked(4);
-gameRoom.checked(5); // end
+console.warn(room);
+room.game.checked(1);
+room.game.checked(2);
+room.game.checked(3);
+room.game.checked(4);
+room.game.checked(5); // end
 
-// gameRoom.restart();
-// console.warn(gameRoom);
+// room.game.restart();
+// console.warn(room);
 
 console.warn('=== back ready ===');
-joinRoom = gameRoom.backReady();
-console.warn(joinRoom);
-joinRoom.user[0].matrix = [...Array(size ** 2).keys()].map(v => v + 1);
+room.backReady();
+console.warn(room);
+user1.matrix = [...Array(size ** 2).keys()].map(v => v + 1);
 
 console.warn('=== start game ===');
-gameRoom = joinRoom.start();
-gameRoom.checked(1);
-gameRoom.checked(2);
-gameRoom.checked(3);
-gameRoom.checked(4);
-gameRoom.checked(5);
-console.warn(gameRoom);
-// end game
-// game.end();
-// console.warn(game);
+room.start();
 
-
-// const room2 = new JoinRoom('XYZ1');
+room.game.checked(1);
+room.game.checked(2);
+room.game.checked(3);
+room.game.checked(4);
+room.game.checked(5);

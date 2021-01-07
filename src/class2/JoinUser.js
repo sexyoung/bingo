@@ -1,3 +1,4 @@
+/** @deprecated */
 import { User } from "./User";
 
 export class JoinUser extends User {
