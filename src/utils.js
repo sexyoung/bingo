@@ -1,3 +1,5 @@
+import fs from 'fs';
+
 const RandChar = [
   ...[...Array(10).keys()].map(v => v + 48),
   ...[...Array(26).keys()].map(v => v + 65)
@@ -47,4 +49,16 @@ export const randMatrix = size => {
   const matrix = [...Array(size ** 2).keys()].map(v => v + 1);
   matrix.sort(() => .5 - Math.random());
   return matrix;
+};
+
+export const isExistFile = (type, file) => {
+  return fs.existsSync(`./server/data/${type}/${file}.json`);
+};
+
+export const readFile = (type, file) => {
+  return JSON.parse(fs.readFileSync(`./server/data/${type}/${file}.json`));
+};
+
+export const writeFile = (type, file, content) => {
+  fs.writeFileSync(`./server/data/${type}/${file}.json`, JSON.stringify(content, null, 2));
 };

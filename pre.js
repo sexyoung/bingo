@@ -1,11 +1,22 @@
 import 'module-alias/register';
+import fs from 'fs';
+import { getRandomChar, writeFile } from "utils";
 
 import { Room, UserDepartment, User } from "class";
 
 console.clear();
 
+// const files = fs.readdirSync('./server/data/room');
+
+// let name;
+// do {
+//   name = getRandomChar(4);
+// } while (fs.existsSync(`./server/data/room/${name}.json`));
+
+// console.warn(name);
+
 // create a new room
-let room = new Room({name: 'ABCD'});
+const room = new Room({name: 'ABCD'});
 
 const size = 5;
 room.size = size;

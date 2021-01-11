@@ -9,9 +9,10 @@ export class Room {
   winLine = 5;
   user = []; // user's id list;
 
-  constructor({ name, size = 5, winLine = 5 }) {
+  constructor({ name, size = 5, winLine = 5, user = [] }) {
     this.name = name;
     this.size = size;
+    this.user = user;
     this.winLine = winLine;
   }
 

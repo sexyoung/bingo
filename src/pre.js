@@ -3,7 +3,7 @@ import { Room, UserDepartment, User } from "class2";
 console.clear();
 
 // create a new room
-let room = new Room({name: 'ABCD'});
+const room = new Room({name: 'ABCD'});
 
 const size = 5;
 room.size = size;

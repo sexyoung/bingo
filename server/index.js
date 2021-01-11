@@ -1,14 +1,13 @@
 import 'module-alias/register';
 
+import fs from 'fs';
 import http from 'http';
 import cors from 'cors';
 import express from 'express';
 import socketIO from 'socket.io';
 
-import { JoinRoom } from "class";
-import { getRandomChar } from "utils";
-
-import { readFile, writeFile } from "./utils";
+import { Room } from "class";
+import { getRandomChar, isExistFile, writeFile  } from "utils";
 
 import {
   RoomHandler,
@@ -35,16 +34,14 @@ app.get('/', (req, res) => {
 });
 
 app.get('/new-room', cors(corsOption), (req, res) => {
-  const dataRoom = readFile('room');
+  // 直到沒重複才建立
   let name;
   do {
     name = getRandomChar(4);
-  } while (dataRoom[name]);
+  } while (isExistFile('room', name));
 
-  // 要小心重複
-  const joinRoom = new JoinRoom({ name });
-  dataRoom[name] = joinRoom;
-  writeFile('room', dataRoom);
+  const room = new Room({ name });
+  writeFile('room', name, room);
   res.json(name);
 });
 
