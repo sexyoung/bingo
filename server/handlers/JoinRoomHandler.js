@@ -1,13 +1,13 @@
 import { Room, User, UserDepartment, RoomDepartment } from "class";
 import { SocketEvent } from "const";
-import { readFile, writeFile } from "utils";
+import { writeFile } from "utils";
 
 export const JoinRoomHandler = ({ io, socket }) => {
   const socketID = socket.id;
   socket.on(SocketEvent.JoinRoom.InviteUserRequest, (roomName, userID) => {
     // 先檢查這個 id 是否有存在room，有的話就不新增
     RoomDepartment.load(roomName);
-    const room = RoomDepartment.room(roomName) ?? Room({ name: roomName});
+    const room = RoomDepartment.room(roomName) ?? RoomDepartment.new(new Room({ name: roomName}));
 
     /** 如果使用者在該房間的話就不允許同id的使用者進來 */
     if(room.existsUser(userID)) {
@@ -25,15 +25,14 @@ export const JoinRoomHandler = ({ io, socket }) => {
     UserDepartment.new(user);
 
     room.invite(user);
-
-    writeFile('room', roomName, room);
+    RoomDepartment.save(roomName);
     UserDepartment.save(userID);
 
-    socket.join(room);
+    socket.join(roomName);
 
-    io.in(room).emit(
+    io.in(roomName).emit(
       SocketEvent.JoinRoom.InviteUserResponse,
-      room.user,
+      room.user.map(UserDepartment.user.bind(UserDepartment)).map(({socketID, ...user}) => user),
     );
   });
 };

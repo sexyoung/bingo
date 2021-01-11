@@ -123,7 +123,7 @@ export const useEvent = socket => {
     return () => {
       socket.off(SocketEvent.Room.Denied, Denied);
       socket.off(SocketEvent.Room.CountDown, CountDown);
-      socket.off(SocketEvent.Room.PlayerUpdate, PlayerUpdate);
+      socket.off(SocketEvent.JoinRoom.InviteUserResponse, PlayerUpdate);
       socket.off(SocketEvent.Room.MessageUpdate, MessageUpdate);
       socket.off(SocketEvent.Room.CountDown, CountDown);
       socket.off(SocketEvent.Room.CountDownStop, CountDownStop);

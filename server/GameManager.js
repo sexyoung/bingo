@@ -14,10 +14,10 @@ class GameManager {
     return instance;
   }
 
-  updatePlayer({io, id, sockets}) {
+  updatePlayer({io, id, sockets, userList}) {
     io.to(id).emit(
-      SocketEvent.Room.PlayerUpdate,
-      sockets.map(socketID => UserManager.get({ socketID }))
+      SocketEvent.JoinRoom.InviteUserResponse,
+      userList,
     );
   }
 

@@ -5,9 +5,10 @@ export class User {
   name;
   matrix = [];
 
-  constructor({ name = 'Player', id = makeID(), socketID }) {
+  constructor({ name = 'Player', id = makeID(), socketID, matrix = [] }) {
     this.id = id;
     this.name = name;
+    this.matrix = matrix;
     this.socketID = socketID;
   }
 

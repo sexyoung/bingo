@@ -20,12 +20,17 @@ export const SocketHandler = ({ io, socket }) => {
       const room = RoomDepartment.room(roomName);
       room.kick(user.id);
       RoomDepartment.save(roomName);
-    }
 
-    // 該使用者的每個聊天室都要移除該使用者
-    for (const room of socket.adapter.rooms) {
-      const [id, [...sockets]] = room;
-      GameManager.updatePlayer({io, id, sockets});
+      /** 通知 */
+      room.user.forEach(UserDepartment.load.bind(UserDepartment));
+      const userList = room.user.map(UserDepartment.user.bind(UserDepartment)).map(({socketID, ...user}) => user);
+
+      // 該使用者的每個聊天室都要移除該使用者
+      for (const room of socket.adapter.rooms) {
+        const [id, [...sockets]] = room;
+        /** 這傢伙遲早要改掉 */
+        GameManager.updatePlayer({io, id, sockets, userList});
+      }
     }
   });
 };
