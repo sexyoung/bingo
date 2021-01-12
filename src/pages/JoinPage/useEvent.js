@@ -21,6 +21,8 @@ export const useEvent = socket => {
   const chatHistoryDOM = createRef([]);
   const [show, setShow] = useState("");
   const [count, setCount] = useState(null);
+  const [user, setUser] = useState({});
+  const [roomInfo, setRoomInfo] = useState({});
   const [userList, setUserList] = useState([]);
   const [qrcode64, setQRCode64] = useState(null);
   const [chatHistory, setChatHistory] = useState([]);
@@ -58,11 +60,10 @@ export const useEvent = socket => {
     // user.join(room);
     const bingoUserID = localStorage.getItem('bingoUserID') || makeID();
     localStorage.setItem('bingoUserID', bingoUserID);
-    socket.emit(
-      SocketEvent.Room.PlayerJoin,
-      room,
-      bingoUserID,
-    );
+
+    /** 使用者加入 */
+    socket.emit( SocketEvent.Room.PlayerJoin, room, bingoUserID );
+    socket.emit( SocketEvent.Room.InfoReq, room );
 
     qrcode.toDataURL(
       `${location.origin + location.pathname}/#/${room}/join`.replace('bingo//', 'bingo/'), {
@@ -75,6 +76,8 @@ export const useEvent = socket => {
       }
     );
 
+    const UserUpdate = user => setUser(user);
+    const RoomInfoUpdate = roomInfo => setRoomInfo(roomInfo);
     const PlayerUpdate = socketList => setUserList(socketList.filter(v => v));
     const MessageUpdate = message => setChatHistory(chatHistory => [ ...chatHistory, message ]);
     const Denied = () => {
@@ -99,9 +102,15 @@ export const useEvent = socket => {
     // 拒絕進入，導頁
     socket.on(SocketEvent.Room.Denied, Denied);
 
-    // 使用者更新
+    // 使用者清單更新
     socket.on(SocketEvent.Room.PlayerUpdate, PlayerUpdate);
     // socket.on(SocketEvent.Room.PlayerUpdate, PlayerUpdate);
+
+    // 取得自己的資料
+    socket.on(SocketEvent.User.InfoRes, UserUpdate);
+
+    // 取得房間的資料
+    socket.on(SocketEvent.Room.InfoRes, RoomInfoUpdate);
 
     // 訊息更新
     socket.on(SocketEvent.Room.MessageUpdate, MessageUpdate);
@@ -121,9 +130,11 @@ export const useEvent = socket => {
     // randomMatrix();
 
     return () => {
+      socket.off(SocketEvent.User.InfoRes, UserUpdate);
+      socket.off(SocketEvent.Room.InfoRes, RoomInfoUpdate);
       socket.off(SocketEvent.Room.Denied, Denied);
       socket.off(SocketEvent.Room.CountDown, CountDown);
-      socket.off(SocketEvent.JoinRoom.PlayerUpdate, PlayerUpdate);
+      socket.off(SocketEvent.Room.PlayerUpdate, PlayerUpdate);
       socket.off(SocketEvent.Room.MessageUpdate, MessageUpdate);
       socket.off(SocketEvent.Room.CountDown, CountDown);
       socket.off(SocketEvent.Room.CountDownStop, CountDownStop);
@@ -155,7 +166,9 @@ export const useEvent = socket => {
   const handleRename = e => {
     e.preventDefault();
     if(!nameDOM.current.value) return;
-    user.changeName(room, nameDOM.current.value);
+    const newName = nameDOM.current.value;
+    socket.emit(SocketEvent.User.ChangeName, room, newName);
+    setUser(user => ({...user, name: newName}));
     setShow('');
   };
 
@@ -196,10 +209,12 @@ export const useEvent = socket => {
   return {
     show,
     size,
+    user,
     count,
     matrix,
     qrcode64,
     userList,
+    roomInfo,
     chatHistory,
 
     handleSubmit,
@@ -222,7 +237,7 @@ export const useEvent = socket => {
       ref={nameDOM}
       className={style.name}
       placeholder="your name"
-      // defaultValue={user.name}
+      defaultValue={user.name}
     />,
     InputDOM: <input type="text" ref={inputDOM} placeholder="輸入訊息" required />,
     ChatHistoryDOM: (

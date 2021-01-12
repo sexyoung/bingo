@@ -1,6 +1,5 @@
 import 'module-alias/register';
 
-import fs from 'fs';
 import http from 'http';
 import cors from 'cors';
 import express from 'express';
@@ -14,7 +13,6 @@ import {
   GameHandler,
   UserHandler,
   SocketHandler,
-  JoinRoomHandler,
 } from "./handlers";
 
 const app = express();
@@ -52,7 +50,6 @@ io.on('connection', socket => {
   UserHandler({ io, socket });
   RoomHandler({ io, socket });
   GameHandler({ io, socket });
-  JoinRoomHandler({ io, socket });
   SocketHandler({ io, socket });
 
 });

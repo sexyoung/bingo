@@ -1,4 +1,5 @@
 import { UserDepartment, RoomDepartment } from "class";
+import { SocketEvent } from "const";
 
 export const SocketHandler = ({ io, socket }) => {
   const socketID = socket.id;

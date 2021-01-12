@@ -24,7 +24,7 @@ export function JoinPage({ socket }) {
         </div>
         <div className={style.fit} />
         <div className={style.userName} onClick={event.toggleShow.bind(this, 'rename')}>
-          {/* {user.name} */}
+          {event.user.name}
         </div>
         <div className={style.matrix} onClick={event.toggleShow.bind(this, 'editor')}/>
       </div>
@@ -40,17 +40,17 @@ export function JoinPage({ socket }) {
           [style.show]: event.show === 'player'
         })}>
           {event.userList.map(user =>
-          {/* <li key={user.id}>
+            <li key={user.id}>
               <div className={style.name}>{user.name}</div>
               <div className={cx(style.percentage, {
-                [style.fin]: user.percentage === 1
+                // [style.fin]: user.percentage === 1
               })}>
                 <div
                   className={style.bar}
-                  style={{ width: `${~~(user.percentage * 100)}%`}}
+                  // style={{ width: `${~~(user.percentage * 100)}%`}}
                 />
               </div>
-            </li> */}
+            </li>
           )}
         </ul>
 

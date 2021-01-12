@@ -1,6 +1,7 @@
 import UserManager from './UserManager';
 import { genWinStr } from './utils';
-import { SocketEvent } from "../src/const";
+import { SocketEvent } from "const";
+import { UserDepartment } from "class";
 
 const GameList = {};
 let instance = null;
@@ -15,9 +16,10 @@ class GameManager {
   }
 
   updatePlayer({io, id, sockets}) {
-    io.to(id).emit(
+    UserDepartment.loadAll();
+    io.in(id).emit(
       SocketEvent.Room.PlayerUpdate,
-      sockets.map(socketID => UserManager.get({ socketID }))
+      sockets.map(UserDepartment.find.bind(UserDepartment))
     );
   }
 

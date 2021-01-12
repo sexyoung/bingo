@@ -1,3 +1,4 @@
+/** @deprecated */
 import { Room, User, UserDepartment, RoomDepartment } from "class";
 import { SocketEvent } from "const";
 
@@ -10,6 +11,7 @@ export const JoinRoomHandler = ({ io, socket }) => {
 
     /** 如果使用者在該房間的話就不允許同id的使用者進來 */
     if(room.existsUser(userID)) {
+      console.warn('Room.Denied');
       return io.to(socketID).emit(
         SocketEvent.Room.Denied
       );

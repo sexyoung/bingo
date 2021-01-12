@@ -1,11 +1,7 @@
 export const SocketEvent = {
-  JoinRoom: {
-    NewRequest: 'JoinRoomNewRequest',
-    NewResponse: 'JoinRoomNewResponse',
-    InviteUserRequest: 'JoinRoomInviteUserRequest',
-    InviteUserResponse: 'JoinRoomInviteUserResponse',
-  },
   Room: {
+    InfoReq: 'RoomInfoReq',
+    InfoRes: 'RoomInfoRes',
     Denied: 'RoomDenied',
     PlayerJoin: 'RoomPlayerJoin',
     PlayerUpdate: 'RoomPlayerUpdate',
@@ -22,6 +18,7 @@ export const SocketEvent = {
     TriggerStartGame: 'RoomTriggerStartGame',
   },
   User: {
+    InfoRes: 'UserInfoRes',
     ChangeName: 'UserChangeName',
   },
   Game: {

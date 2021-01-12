@@ -67,6 +67,7 @@ export class User {
     );
   }
 
+  /** @deprecated */
   changeName(room, newName) {
     this.name = newName;
     this.save();

@@ -31,7 +31,7 @@ class RoomDepartmentSingleton {
 
   load(name) {
     if(!isExistFile('room', name)) return;
-    this.data[name] = new Room(readFile('room', name));
+    return this.data[name] = new Room(readFile('room', name));
   }
 
   loadAll() {
