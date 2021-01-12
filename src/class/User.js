@@ -37,6 +37,7 @@ export class User {
     localStorage.setItem('bingoUser', JSON.stringify(saveUser));
   }
 
+  /** @deprecated */
   getGUID(len = 32) {
     let result = '';
     for (let i = 0; i < len; i++) {
@@ -46,6 +47,7 @@ export class User {
     return result.slice(0, result.length - 1);
   }
 
+  /** @deprecated */
   join(room) {
     // this.room = room;
     this.socket.emit(
@@ -59,6 +61,7 @@ export class User {
     this.socket.emit(SocketEvent.Room.MessageSend, room, message);
   }
 
+  /** @deprecated */
   updateProcess(room, percentage) {
     this.socket.emit(
       SocketEvent.Room.UpdateProcess,

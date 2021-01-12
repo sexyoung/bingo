@@ -43,11 +43,11 @@ export function JoinPage({ socket }) {
             <li key={user.id}>
               <div className={style.name}>{user.name}</div>
               <div className={cx(style.percentage, {
-                // [style.fin]: user.percentage === 1
+                [style.fin]: user.percentage === 1
               })}>
                 <div
                   className={style.bar}
-                  // style={{ width: `${~~(user.percentage * 100)}%`}}
+                  style={{ width: `${~~(user.percentage * 100)}%`}}
                 />
               </div>
             </li>
@@ -65,19 +65,21 @@ export function JoinPage({ socket }) {
         </div>
 
         {/* 表格 */}
-        <div className={cx([style.editorPane], {
-          [style.show]: event.show === 'editor'
-        })}>
-          <Matrix {...{
-            data: event.matrix,
-            onClick: event.handlePutNum,
-            isActive: true,
-          }} />
-          <div className={style.buttons}>
-            <button className={style.reset} onClick={event.resetMatrix}>RESET</button>
-            <button className={style.random} onClick={event.randomMatrix}>RANDOM</button>
+        {event.user.matrix &&
+          <div className={cx([style.editorPane], {
+            [style.show]: event.show === 'editor'
+          })}>
+            <Matrix {...{
+              data: event.user.matrix,
+              onClick: event.handlePutNum,
+              isActive: true,
+            }} />
+            <div className={style.buttons}>
+              <button className={style.reset} onClick={event.resetMatrix} disabled>RESET</button>
+              <button className={style.random} onClick={event.randomMatrix}>RANDOM</button>
+            </div>
           </div>
-        </div>
+        }
 
         {/* qr code */}
         <div className={cx([style.qrcodePane], {

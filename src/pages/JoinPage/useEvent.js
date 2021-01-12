@@ -15,7 +15,7 @@ export const useEvent = socket => {
   const nameDOM = createRef();
   const inputDOM = createRef();
   const history = useHistory();
-  const { room } = useParams();
+  const { roomID } = useParams();
   const canvasDOM = createRef();
   const [size, setSize] = useState(5);
   const chatHistoryDOM = createRef([]);
@@ -31,14 +31,17 @@ export const useEvent = socket => {
   );
 
   const updateProcess = matrix => {
-    // console.warn('updateProcess');
     user.matrix = matrix;
-    user.updateProcess(room, matrix.filter(v => v).length / (size ** 2));
+    socket.emit(
+      SocketEvent.Room.UpdateProcess,
+      roomID,
+      matrix,
+      matrix.filter(v => v).length / (roomInfo.size ** 2)
+    );
   };
 
   const matrixProcess = updateMatrix => {
     num = updateMatrix.filter(v => v).length;
-    setMatrix(updateMatrix);
     updateProcess(updateMatrix);
   };
 
@@ -51,7 +54,7 @@ export const useEvent = socket => {
   };
 
   const handleStartGame = () => {
-    user.startGame(room, size, size);
+    user.startGame(roomID, size, size);
   };
 
   useLayoutEffect(() => {
@@ -62,11 +65,11 @@ export const useEvent = socket => {
     localStorage.setItem('bingoUserID', bingoUserID);
 
     /** 使用者加入 */
-    socket.emit( SocketEvent.Room.PlayerJoin, room, bingoUserID );
-    socket.emit( SocketEvent.Room.InfoReq, room );
+    socket.emit( SocketEvent.Room.PlayerJoin, roomID, bingoUserID );
+    socket.emit( SocketEvent.Room.InfoReq, roomID );
 
     qrcode.toDataURL(
-      `${location.origin + location.pathname}/#/${room}/join`.replace('bingo//', 'bingo/'), {
+      `${location.origin + location.pathname}/#/${roomID}/join`.replace('bingo//', 'bingo/'), {
         width: 512,
         height: 512,
       },
@@ -95,8 +98,8 @@ export const useEvent = socket => {
 
     const StartGame = () => {
       user.save();
-      user.saveMatrix2Server(room, user.matrix);
-      history.replace(`/${room}/game`);
+      user.saveMatrix2Server(roomID, user.matrix);
+      history.replace(`/${roomID}/game`);
     };
 
     // 拒絕進入，導頁
@@ -150,7 +153,7 @@ export const useEvent = socket => {
 
   const handleSubmit = e => {
     e.preventDefault();
-    user.send(room, inputDOM.current.value);
+    user.send(roomID, inputDOM.current.value);
     inputDOM.current.value = '';
     setShow('');
     // if mobile....
@@ -167,13 +170,13 @@ export const useEvent = socket => {
     e.preventDefault();
     if(!nameDOM.current.value) return;
     const newName = nameDOM.current.value;
-    socket.emit(SocketEvent.User.ChangeName, room, newName);
+    socket.emit(SocketEvent.User.ChangeName, roomID, newName);
     setUser(user => ({...user, name: newName}));
     setShow('');
   };
 
   const handleStartCountDown = () => {
-    user.startCountDown(room);
+    user.startCountDown(roomID);
   };
 
   const resetMatrix = () => {
@@ -203,7 +206,7 @@ export const useEvent = socket => {
   };
 
   const handleCountDownCancel = () => {
-    user.countDownCancel(room);
+    user.countDownCancel(roomID);
   };
 
   return {

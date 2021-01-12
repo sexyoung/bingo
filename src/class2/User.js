@@ -5,11 +5,13 @@ export class User {
   name;
   matrix = [];
 
-  constructor({ name = 'Player', id = makeID(), socketID, matrix = [] }) {
+  constructor({ name = 'Player', id = makeID(), matrix = [], ...props }) {
     this.id = id;
     this.name = name;
     this.matrix = matrix;
-    this.socketID = socketID;
+    for (const key in props) {
+      this[key] = props[key];
+    }
   }
 
   // 要通知所有房間的人

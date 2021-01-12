@@ -81,14 +81,18 @@ export const RoomHandler = ({ io, socket }) => {
   });
 
   /** 更新進度 */
-  socket.on(SocketEvent.Room.UpdateProcess, (room, percentage) => {
-    const user = UserManager.get({ socketID });
+  socket.on(SocketEvent.Room.UpdateProcess, (roomID, matrix, percentage) => {
+    UserDepartment.loadAll();
+    const user = UserDepartment.find(socketID);
     if(!user) return;
-    UserManager.get({ socketID }).percentage = percentage;
+    UserDepartment.user(user.id).matrix = matrix;
+    UserDepartment.user(user.id).percentage = percentage;
+    UserDepartment.save(user.id);
+    // UserManager.get({ socketID }).percentage = percentage;
     GameManager.updatePlayer({
       io,
-      id: room,
-      sockets: [...io.sockets.adapter.rooms.get(room)]
+      id: roomID,
+      sockets: [...io.sockets.adapter.rooms.get(roomID)]
     });
   });
 
