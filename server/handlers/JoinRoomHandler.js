@@ -1,10 +1,9 @@
 import { Room, User, UserDepartment, RoomDepartment } from "class";
 import { SocketEvent } from "const";
-import { writeFile } from "utils";
 
 export const JoinRoomHandler = ({ io, socket }) => {
   const socketID = socket.id;
-  socket.on(SocketEvent.JoinRoom.InviteUserRequest, (roomName, userID) => {
+  socket.on(SocketEvent.Room.PlayerJoin, (roomName, userID) => {
     // 先檢查這個 id 是否有存在room，有的話就不新增
     RoomDepartment.load(roomName);
     const room = RoomDepartment.room(roomName) ?? RoomDepartment.new(new Room({ name: roomName}));
@@ -16,14 +15,15 @@ export const JoinRoomHandler = ({ io, socket }) => {
       );
     }
 
-    /** load all user from room */
+    /** 把每個使用者的資料調出來 */
     room.user.forEach(UserDepartment.load.bind(UserDepartment));
 
-    /** if user isn't in data, create it. */
+    /** 如果沒有使用者則建立 */
     const user = UserDepartment.user(userID) || new User({id: userID, socketID});
     user.socketID = socketID;
     UserDepartment.new(user);
 
+    /** 加入該使用者並儲存 */
     room.invite(user);
     RoomDepartment.save(roomName);
     UserDepartment.save(userID);
@@ -31,7 +31,7 @@ export const JoinRoomHandler = ({ io, socket }) => {
     socket.join(roomName);
 
     io.in(roomName).emit(
-      SocketEvent.JoinRoom.InviteUserResponse,
+      SocketEvent.Room.PlayerUpdate,
       room.user.map(UserDepartment.user.bind(UserDepartment)).map(({socketID, ...user}) => user),
     );
   });

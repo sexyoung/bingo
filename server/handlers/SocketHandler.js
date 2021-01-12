@@ -1,5 +1,3 @@
-import GameManager from '../GameManager';
-
 import { UserDepartment, RoomDepartment } from "class";
 
 export const SocketHandler = ({ io, socket }) => {
@@ -29,7 +27,11 @@ export const SocketHandler = ({ io, socket }) => {
       for (const room of socket.adapter.rooms) {
         const [id, [...sockets]] = room;
         /** 這傢伙遲早要改掉 */
-        GameManager.updatePlayer({io, id, sockets, userList});
+        // GameManager.updatePlayer({io, id, sockets, userList});
+        io.to(id).emit(
+          SocketEvent.Room.PlayerUpdate,
+          userList,
+        );
       }
     }
   });

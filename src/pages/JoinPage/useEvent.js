@@ -59,7 +59,7 @@ export const useEvent = socket => {
     const bingoUserID = localStorage.getItem('bingoUserID') || makeID();
     localStorage.setItem('bingoUserID', bingoUserID);
     socket.emit(
-      SocketEvent.JoinRoom.InviteUserRequest,
+      SocketEvent.Room.PlayerJoin,
       room,
       bingoUserID,
     );
@@ -100,7 +100,7 @@ export const useEvent = socket => {
     socket.on(SocketEvent.Room.Denied, Denied);
 
     // 使用者更新
-    socket.on(SocketEvent.JoinRoom.InviteUserResponse, PlayerUpdate);
+    socket.on(SocketEvent.Room.PlayerUpdate, PlayerUpdate);
     // socket.on(SocketEvent.Room.PlayerUpdate, PlayerUpdate);
 
     // 訊息更新
@@ -123,7 +123,7 @@ export const useEvent = socket => {
     return () => {
       socket.off(SocketEvent.Room.Denied, Denied);
       socket.off(SocketEvent.Room.CountDown, CountDown);
-      socket.off(SocketEvent.JoinRoom.InviteUserResponse, PlayerUpdate);
+      socket.off(SocketEvent.JoinRoom.PlayerUpdate, PlayerUpdate);
       socket.off(SocketEvent.Room.MessageUpdate, MessageUpdate);
       socket.off(SocketEvent.Room.CountDown, CountDown);
       socket.off(SocketEvent.Room.CountDownStop, CountDownStop);
