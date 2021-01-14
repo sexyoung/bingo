@@ -25,13 +25,13 @@ class RoomDepartmentSingleton {
     });
   }
 
-  room(name) {
-    return this.data[name];
+  room(roomID) {
+    return this.data[roomID];
   }
 
-  load(name) {
-    if(!isExistFile('room', name)) return;
-    return this.data[name] = new Room(readFile('room', name));
+  load(roomID) {
+    if(!isExistFile('room', roomID)) return;
+    return this.data[roomID] = new Room(readFile('room', roomID));
   }
 
   loadAll() {

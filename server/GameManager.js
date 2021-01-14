@@ -15,11 +15,17 @@ class GameManager {
     return instance;
   }
 
-  updatePlayer({io, id, sockets}) {
+  updatePlayer({io, id, sockets, size}) {
     UserDepartment.loadAll();
     io.in(id).emit(
       SocketEvent.Room.PlayerUpdate,
-      sockets.map(UserDepartment.find.bind(UserDepartment))
+      sockets
+        .map(UserDepartment.find.bind(UserDepartment))
+        .map(({id, name, matrix}) => ({
+          id,
+          name,
+          percentage: matrix.filter(v => v).length / (matrix.length || 1),
+        }))
     );
   }
 

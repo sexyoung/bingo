@@ -1,5 +1,5 @@
 import { UserDepartment, RoomDepartment } from "class";
-import { SocketEvent } from "const";
+import GameManager from '../GameManager';
 
 export const SocketHandler = ({ io, socket }) => {
   const socketID = socket.id;
@@ -11,28 +11,20 @@ export const SocketHandler = ({ io, socket }) => {
     if(user) {
       RoomDepartment.loadAll();
       /** 找到使用者在的房間 */
-      const roomName = Object.keys(RoomDepartment.data).find(roomName => {
-        return RoomDepartment.data[roomName].user.includes(user.id);
+      const roomID = Object.keys(RoomDepartment.data).find(roomID => {
+        return RoomDepartment.data[roomID].user.includes(user.id);
       });
 
       /** 踢出他 */
-      const room = RoomDepartment.room(roomName);
+      const room = RoomDepartment.room(roomID);
       room.kick(user.id);
-      RoomDepartment.save(roomName);
-
-      /** 通知 */
-      room.user.forEach(UserDepartment.load.bind(UserDepartment));
-      const userList = room.user.map(UserDepartment.user.bind(UserDepartment)).map(({socketID, ...user}) => user);
+      RoomDepartment.save(roomID);
 
       // 該使用者的每個聊天室都要移除該使用者
-      for (const room of socket.adapter.rooms) {
-        const [id, [...sockets]] = room;
+      for (const Room of socket.adapter.rooms) {
+        const [id, [...sockets]] = Room;
         /** 這傢伙遲早要改掉 */
-        // GameManager.updatePlayer({io, id, sockets, userList});
-        io.to(id).emit(
-          SocketEvent.Room.PlayerUpdate,
-          userList,
-        );
+        GameManager.updatePlayer({io, id, sockets, size: room.size});
       }
     }
   });

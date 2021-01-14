@@ -54,7 +54,7 @@ export const useEvent = socket => {
   };
 
   const handleStartGame = () => {
-    user.startGame(roomID, size, size);
+    socket.emit(SocketEvent.Room.TriggerStartGame, roomID);
   };
 
   useLayoutEffect(() => {
@@ -81,10 +81,12 @@ export const useEvent = socket => {
 
     const UserUpdate = user => setUser(user);
     const RoomInfoUpdate = roomInfo => setRoomInfo(roomInfo);
-    const PlayerUpdate = socketList => setUserList(socketList.filter(v => v));
+    const PlayerUpdate = socketList => {
+      console.warn('socketList', socketList);
+      setUserList(socketList.filter(v => v));
+    };
     const MessageUpdate = message => setChatHistory(chatHistory => [ ...chatHistory, message ]);
     const Denied = () => {
-      user.leave();
       history.push('/denied');
     };
 
@@ -97,9 +99,8 @@ export const useEvent = socket => {
     };
 
     const StartGame = () => {
-      user.save();
-      user.saveMatrix2Server(roomID, user.matrix);
-      history.replace(`/${roomID}/game`);
+      console.warn(StartGame);
+      history.push(`/${roomID}/game`);
     };
 
     // 拒絕進入，導頁
@@ -176,7 +177,7 @@ export const useEvent = socket => {
   };
 
   const handleStartCountDown = () => {
-    user.startCountDown(roomID);
+    socket.emit(SocketEvent.Room.TriggerCountDown, roomID);
   };
 
   const resetMatrix = () => {

@@ -22,13 +22,13 @@ const nameColor = name => {
   return `rgba(${r}, ${g}, ${b}, .45)`;
 };
 
-export function GamePage({ user }) {
-  const { room } = useParams();
+export function GamePage({ socket }) {
+  const { roomID } = useParams();
   const history = useHistory();
+  const [user, setUser] = useState({});
   const [ turnID, setTurnID ] = useState("");
   useLayoutEffect(() => {
     const Denied = () => {
-      user.leave();
       history.push('/denied');
     };
 
@@ -41,58 +41,65 @@ export function GamePage({ user }) {
     };
 
     const SelfMatrix = (matrix, newCheckedList, newTurnID, newPlyerInfoList, newWinList = [], newWinLine) => {
-      user.matrix = matrix;
+      // user.matrix = matrix;
       UpdateChecked(newCheckedList, newTurnID, newPlyerInfoList, newWinList, newWinLine);
     };
 
     // 如果使用者重整的話，並且立馬停止監聽
     const fetchMatrix = () => {
-      user.fetchMatrix(room);
-      user.socket.off(SocketEvent.Room.PlayerUpdate, fetchMatrix);
+      // user.fetchMatrix(room);
+      socket.off(SocketEvent.Room.PlayerUpdate, fetchMatrix);
     };
 
     const GoJoin = () => {
-      history.replace(`/${room}/join`);
+      history.push(`/${roomID}/join`);
     };
 
+    const UserUpdate = user => setUser(user);
+
     // 拒絕進入，導頁
-    user.socket.on(SocketEvent.Room.Denied, Denied);
+    socket.on(SocketEvent.Room.Denied, Denied);
 
     // 點擊數字
-    user.socket.on(SocketEvent.Game.UpdateChecked, UpdateChecked);
+    socket.on(SocketEvent.Game.UpdateChecked, UpdateChecked);
 
     // 從伺服端取得自己的matrix
-    user.socket.on(SocketEvent.Game.SelfMatrix, SelfMatrix);
+    socket.on(SocketEvent.Game.SelfMatrix, SelfMatrix);
 
     // 從伺服端取得自己的matrix
-    user.socket.on(SocketEvent.Game.GoJoin, GoJoin);
+    socket.on(SocketEvent.Game.GoJoin, GoJoin);
 
-    if(user.socket.connected) {
-      user.fetchMatrix(room); // trigger RoomPlayerUpdate
+    // 取得自己的資料
+    socket.on(SocketEvent.User.InfoRes, UserUpdate);
+
+    if(socket.connected) {
+      // user.fetchMatrix(roomID); // trigger RoomPlayerUpdate
     } else {
       // join
       // 如果使用者重整的話，會需要執行這行
-      user.join(room);
-      user.socket.on(SocketEvent.Room.PlayerUpdate, fetchMatrix);
+      const bingoUserID = localStorage.getItem('bingoUserID') || makeID();
+      socket.emit( SocketEvent.Room.PlayerJoin, roomID, bingoUserID );
+      socket.on(SocketEvent.Room.PlayerUpdate, fetchMatrix);
     }
 
     return () => {
-      user.socket.off(SocketEvent.Game.GoJoin, GoJoin);
-      user.socket.off(SocketEvent.Room.Denied, Denied);
-      user.socket.off(SocketEvent.Game.SelfMatrix, SelfMatrix);
-      user.socket.off(SocketEvent.Game.UpdateChecked, UpdateChecked);
+      socket.off(SocketEvent.Game.GoJoin, GoJoin);
+      socket.off(SocketEvent.Room.Denied, Denied);
+      socket.off(SocketEvent.Game.SelfMatrix, SelfMatrix);
+      socket.off(SocketEvent.Game.UpdateChecked, UpdateChecked);
+      socket.off(SocketEvent.User.InfoRes, UserUpdate);
     };
   }, []);
 
   const handleClick = index => {
     if (checkedList.includes(user.matrix[index])) return;
-    user.checked(room, user.matrix[index]);
+    user.checked(roomID, user.matrix[index]);
     // save user checked num
     // and notice other user the number is checked
   };
 
   const handleReplay = () => {
-    user.replay(room);
+    user.replay(roomID);
   };
 
   // winLine = 5;
@@ -103,8 +110,9 @@ export function GamePage({ user }) {
   // winList = ['sexyoung', 'kelly']; // test
   // console.warn(Boolean(winList.length)); // test
   // user.matrix = [...Array(25).keys()]; // test
-  if(!user.matrix?.length) return null;
 
+  if(!user?.matrix?.length) return null;
+  console.warn(user);
   const turnUser = plyerInfoList.find(({ id }) => id === turnID) || {};
 
   return (

@@ -4,7 +4,7 @@ import { SocketEvent } from "const";
 
 import { Room, User, UserDepartment, RoomDepartment } from "class";
 
-const count = 3;
+const count = 1;
 const RoomCount = {};
 const RoomInterval = {};
 
@@ -19,7 +19,6 @@ export const RoomHandler = ({ io, socket }) => {
 
     /** 如果使用者在該房間的話就不允許同id的使用者進來 */
     if(room.existsUser(userID)) {
-      console.warn('Room.Denied');
       return io.to(socketID).emit(
         SocketEvent.Room.Denied
       );
@@ -48,7 +47,7 @@ export const RoomHandler = ({ io, socket }) => {
     /** TODO: 應該可以用 io.in 取代 */
     const sockets = [...io.sockets.adapter.rooms.get(roomID)];
     if(sockets.length) {
-      GameManager.updatePlayer({io, id: roomID, sockets});
+      GameManager.updatePlayer({io, id: roomID, sockets, size: room.size});
     }
     // io.in(roomID).emit(
     //   SocketEvent.Room.PlayerUpdate,
@@ -62,6 +61,7 @@ export const RoomHandler = ({ io, socket }) => {
     // }
   });
 
+  /** 取得房間資訊 */
   socket.on(SocketEvent.Room.InfoReq, roomID => {
     RoomDepartment.load(roomID);
     io.to(roomID).emit(
@@ -80,7 +80,7 @@ export const RoomHandler = ({ io, socket }) => {
     });
   });
 
-  /** 更新進度 */
+  /** 更新進度, 先等等。 */
   socket.on(SocketEvent.Room.UpdateProcess, (roomID, matrix, percentage) => {
     UserDepartment.loadAll();
     const user = UserDepartment.find(socketID);
@@ -97,39 +97,43 @@ export const RoomHandler = ({ io, socket }) => {
   });
 
   /** 倒數計時 */
-  socket.on(SocketEvent.Room.TriggerCountDown, room => {
-    RoomCount[room] = count;
-    io.in(room).emit(SocketEvent.Room.CountDown, RoomCount[room]);
-    RoomInterval[room] = setInterval(() => {
-      --RoomCount[room];
-      if(RoomCount[room] < 0) {
-        clearInterval(RoomInterval[room]);
-        io.in(room).emit(SocketEvent.Room.CountDownEnd);
+  socket.on(SocketEvent.Room.TriggerCountDown, roomID => {
+    RoomCount[roomID] = count;
+    io.in(roomID).emit(SocketEvent.Room.CountDown, RoomCount[roomID]);
+    RoomInterval[roomID] = setInterval(() => {
+      --RoomCount[roomID];
+      if(RoomCount[roomID] < 0) {
+        clearInterval(RoomInterval[roomID]);
+        io.in(roomID).emit(SocketEvent.Room.CountDownEnd);
       } else {
-        io.in(room).emit(SocketEvent.Room.CountDown, RoomCount[room]);
+        io.in(roomID).emit(SocketEvent.Room.CountDown, RoomCount[roomID]);
       }
     }, 1000);
   });
 
   /** 倒數計時取消 */
-  socket.on(SocketEvent.Room.CountDownCancel, room => {
-    clearInterval(RoomInterval[room]);
-    io.in(room).emit(SocketEvent.Room.CountDownStop);
+  socket.on(SocketEvent.Room.CountDownCancel, roomID => {
+    clearInterval(RoomInterval[roomID]);
+    io.in(roomID).emit(SocketEvent.Room.CountDownStop);
   });
 
   /** 觸發開始遊戲 */
-  socket.on(SocketEvent.Room.TriggerStartGame, (room, size, winLine) => {
-    GameManager.build({
-      size,
-      room,
-      winLine,
-      sockets: [...io.sockets.adapter.rooms.get(room)],
-    });
+  socket.on(SocketEvent.Room.TriggerStartGame, roomID => {
+    RoomDepartment.load(roomID);
+    const room = RoomDepartment.room(roomID);
+    room.start();
+    // GameManager.build({
+    //   size,
+    //   roomID,
+    //   winLine,
+    //   sockets: [...io.sockets.adapter.rooms.get(roomID)],
+    // });
 
-    io.in(room).emit(SocketEvent.Room.StartGame);
+    io.in(roomID).emit(SocketEvent.Room.StartGame);
   });
 
   // 把每個人的 matrix 暫存
+  /** @deprecated */
   socket.on(SocketEvent.Room.SaveMatrix, (room, matrix) => {
     const game = GameManager.get(room);
     if(!game) return;

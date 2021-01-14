@@ -3,94 +3,9 @@ import { getRandomChar } from "utils";
 
 // TODO: 這邊有一些方法應集中到另一個 Class Room
 export class User {
-  constructor(socket) {
-    let user = localStorage.getItem('bingoUser');
-    if(!user) {
-      user = JSON.stringify({
-        name: 'Player',
-        id: this.getGUID(),
-      });
-      localStorage.setItem('bingoUser', user);
-    }
-    const attr = JSON.parse(user);
-    for (const key in attr) {
-      this[key] = attr[key];
-    }
-    this.socket = socket;
-
-    this.socket?.on("connected", socketID => {
-      // console.warn('socketID connected: ', socketID);
-    });
-  }
-
-  save() {
-    const saveUser = {};
-    const attr = Object.keys(this).filter(v =>
-      // socket 不用存
-      !['socket', 'room', 'matrix'].includes(v)
-    );
-
-    for (let i = 0; i < attr.length; i++) {
-      saveUser[attr[i]] = this[attr[i]];
-    }
-
-    localStorage.setItem('bingoUser', JSON.stringify(saveUser));
-  }
-
-  /** @deprecated */
-  getGUID(len = 32) {
-    let result = '';
-    for (let i = 0; i < len; i++) {
-      result += getRandomChar();
-      if(i % 8 === 7) result += '-';
-    }
-    return result.slice(0, result.length - 1);
-  }
-
-  /** @deprecated */
-  join(room) {
-    // this.room = room;
-    this.socket.emit(
-      SocketEvent.Room.PlayerJoin,
-      room,
-      JSON.parse(localStorage.getItem('bingoUser'))
-    );
-  }
-
-  send(room, message) {
-    this.socket.emit(SocketEvent.Room.MessageSend, room, message);
-  }
-
-  /** @deprecated */
-  updateProcess(room, percentage) {
-    this.socket.emit(
-      SocketEvent.Room.UpdateProcess,
-      room,
-      percentage
-    );
-  }
-
-  /** @deprecated */
-  changeName(room, newName) {
-    this.name = newName;
-    this.save();
-    this.socket.emit(SocketEvent.User.ChangeName, room, newName);
-  }
-
-  startCountDown(room) {
-    this.socket.emit(SocketEvent.Room.TriggerCountDown, room);
-  }
-
-  startGame(room, size, winLine) {
-    this.socket.emit(SocketEvent.Room.TriggerStartGame, room, size, winLine);
-  }
 
   countDownCancel(room) {
     this.socket.emit(SocketEvent.Room.CountDownCancel, room);
-  }
-
-  saveMatrix2Server(room, matrix) {
-    this.socket.emit(SocketEvent.Room.SaveMatrix, room, matrix);
   }
 
   checked(room, num) {

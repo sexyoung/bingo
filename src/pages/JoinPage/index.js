@@ -95,23 +95,23 @@ export function JoinPage({ socket }) {
       </div>
 
       <form className={style.sendMsgBar} onSubmit={event.handleSubmit}>
-        {/* {!event.userList.findIndex(u => u.id === user.id) &&
+        {!event.userList.findIndex(u => u.id === event.user.id) &&
           <button
             type="button"
             className={style.startBtn}
             onClick={event.handleStartCountDown}
-            disabled={event.userList.length <= 1 || event.userList.some(({ percentage = 0 }) => percentage !== 1)}
+            disabled={event.userList.some(({ percentage = 0 }) => percentage !== 1)}
           >Start</button>
-        } */}
+        }
         {InputDOM}
         <button type="submit" className={style.sendBtn}>　</button>
       </form>
 
       {event.count !== null &&
-          <div className={cx(style.countdown)}>
-            {event.count}
-            <button className={style.stopBtn} onClick={event.handleCountDownCancel}>CANCEL</button>
-          </div>
+        <div className={cx(style.countdown)}>
+          {event.count}
+          <button className={style.stopBtn} onClick={event.handleCountDownCancel}>CANCEL</button>
+        </div>
       }
     </div>
   );
