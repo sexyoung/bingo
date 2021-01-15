@@ -112,6 +112,7 @@ export const RoomHandler = ({ io, socket }) => {
     RoomDepartment.load(roomID);
     const room = RoomDepartment.room(roomID);
     room.start();
+    RoomDepartment.save(roomID);
     io.in(roomID).emit(SocketEvent.Room.StartGame);
   });
 };

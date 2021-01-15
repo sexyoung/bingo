@@ -22,6 +22,8 @@ export const SocketEvent = {
     ChangeName: 'UserChangeName',
   },
   Game: {
+    InfoReq: 'GameInfoReq',
+    InfoRes: 'GameInfoRes',
     GoJoin: 'GameGoJoin',
     RePlay: 'GameRePlay',
     CheckNum: 'GameCheckNum',

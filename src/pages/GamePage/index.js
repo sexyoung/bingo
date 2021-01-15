@@ -25,6 +25,7 @@ const nameColor = name => {
 export function GamePage({ socket }) {
   const { roomID } = useParams();
   const history = useHistory();
+  const [game, setGame] = useState({});
   const [user, setUser] = useState({});
   const [ turnID, setTurnID ] = useState("");
   useLayoutEffect(() => {
@@ -32,63 +33,74 @@ export function GamePage({ socket }) {
       history.push('/denied');
     };
 
-    const UpdateChecked = (newCheckedList, newTurnID, newPlyerInfoList, newWinList = [], newWinLine) => {
-      checkedList = newCheckedList;
-      plyerInfoList = newPlyerInfoList;
-      winList = newWinList;
-      winLine = newWinLine;
-      setTurnID(newTurnID);
-    };
+    socket.on('connect', () => {
+      console.warn('ccc');
+      const UpdateChecked = (newCheckedList, newTurnID, newPlyerInfoList, newWinList = [], newWinLine) => {
+        checkedList = newCheckedList;
+        plyerInfoList = newPlyerInfoList;
+        winList = newWinList;
+        winLine = newWinLine;
+        setTurnID(newTurnID);
+      };
 
-    const SelfMatrix = (matrix, newCheckedList, newTurnID, newPlyerInfoList, newWinList = [], newWinLine) => {
-      // user.matrix = matrix;
-      UpdateChecked(newCheckedList, newTurnID, newPlyerInfoList, newWinList, newWinLine);
-    };
+      const SelfMatrix = (matrix, newCheckedList, newTurnID, newPlyerInfoList, newWinList = [], newWinLine) => {
+        // user.matrix = matrix;
+        UpdateChecked(newCheckedList, newTurnID, newPlyerInfoList, newWinList, newWinLine);
+      };
 
-    // 如果使用者重整的話，並且立馬停止監聽
-    const fetchMatrix = () => {
-      // user.fetchMatrix(room);
-      socket.off(SocketEvent.Room.PlayerUpdate, fetchMatrix);
-    };
+      // 如果使用者重整的話，並且立馬停止監聽
+      const fetchMatrix = () => {
+        // user.fetchMatrix(room);
+        socket.off(SocketEvent.Room.PlayerUpdate, fetchMatrix);
+      };
 
-    const GoJoin = () => {
-      history.push(`/${roomID}/join`);
-    };
+      const GoJoin = () => {
+        history.push(`/${roomID}/join`);
+      };
 
-    const UserUpdate = user => setUser(user);
+      const UserUpdate = user => setUser(user);
 
-    // 拒絕進入，導頁
-    socket.on(SocketEvent.Room.Denied, Denied);
+      const GameUpdate = game => setGame(game);
 
-    // 點擊數字
-    socket.on(SocketEvent.Game.UpdateChecked, UpdateChecked);
+      // 拒絕進入，導頁
+      socket.on(SocketEvent.Room.Denied, Denied);
 
-    // 從伺服端取得自己的matrix
-    socket.on(SocketEvent.Game.SelfMatrix, SelfMatrix);
+      // 點擊數字
+      socket.on(SocketEvent.Game.UpdateChecked, UpdateChecked);
 
-    // 從伺服端取得自己的matrix
-    socket.on(SocketEvent.Game.GoJoin, GoJoin);
+      // 從伺服端取得自己的matrix
+      socket.on(SocketEvent.Game.SelfMatrix, SelfMatrix);
 
-    // 取得自己的資料
-    socket.on(SocketEvent.User.InfoRes, UserUpdate);
+      // 從伺服端取得自己的matrix
+      socket.on(SocketEvent.Game.GoJoin, GoJoin);
 
-    if(socket.connected) {
-      // user.fetchMatrix(roomID); // trigger RoomPlayerUpdate
-    } else {
+      // 取得自己的資料
+      socket.on(SocketEvent.User.InfoRes, UserUpdate);
+
+      // 取得遊戲資料
+      socket.emit(SocketEvent.Game.InfoReq, roomID);
+
+      // if(socket.connected) {
+      //   // user.fetchMatrix(roomID); // trigger RoomPlayerUpdate
+      // } else {
       // join
       // 如果使用者重整的話，會需要執行這行
       const bingoUserID = localStorage.getItem('bingoUserID') || makeID();
       socket.emit( SocketEvent.Room.PlayerJoin, roomID, bingoUserID );
       socket.on(SocketEvent.Room.PlayerUpdate, fetchMatrix);
-    }
+      // 取得房間的資料
+      socket.on(SocketEvent.Game.InfoRes, GameUpdate);
+      // }
 
-    return () => {
-      socket.off(SocketEvent.Game.GoJoin, GoJoin);
-      socket.off(SocketEvent.Room.Denied, Denied);
-      socket.off(SocketEvent.Game.SelfMatrix, SelfMatrix);
-      socket.off(SocketEvent.Game.UpdateChecked, UpdateChecked);
-      socket.off(SocketEvent.User.InfoRes, UserUpdate);
-    };
+      return () => {
+        socket.off(SocketEvent.Game.GoJoin, GoJoin);
+        socket.off(SocketEvent.Room.Denied, Denied);
+        socket.off(SocketEvent.Game.SelfMatrix, SelfMatrix);
+        socket.off(SocketEvent.Game.UpdateChecked, UpdateChecked);
+        socket.off(SocketEvent.User.InfoRes, UserUpdate);
+        socket.off(SocketEvent.Game.InfoRes, GameUpdate);
+      };
+    });
   }, []);
 
   const handleClick = index => {

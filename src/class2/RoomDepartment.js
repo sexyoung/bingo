@@ -43,6 +43,7 @@ class RoomDepartmentSingleton {
   }
 
   save(roomID) {
+    delete this.data[roomID].game?.room;
     writeFile('room', roomID, this.data[roomID]);
   }
 }

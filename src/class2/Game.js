@@ -1,14 +1,20 @@
 import { genWinStr, randMatrix } from 'utils';
-import { UserDepartment } from '.';
+import { RoomDepartment, UserDepartment } from '.';
 
 export class Game {
   winUsers = [];
   turnIndex = 0; // player index?
   checkedList = []; // number[]
   constructor(size, room) {
-    this.room = room;
-    this.winStr = genWinStr(size);
-    this.turnIndex = ~~(room.user.length * Math.random());
+    this.roomID = room.name;
+    if(!room.game) {
+      this.winStr = genWinStr(size);
+      this.turnIndex = ~~(room.user.length * Math.random());
+    } else {
+      for (const key in room.game) {
+        this[key] = room.game[key];
+      }
+    }
   }
 
   checked(num) {
@@ -24,13 +30,15 @@ export class Game {
 
     this.checkedList.push(num);
 
-    const users = this.room.user.map(UserDepartment.user.bind(UserDepartment));
+    const room = RoomDepartment.load(this.roomID);
+
+    const users = room.user.map(UserDepartment.user.bind(UserDepartment));
 
     users.forEach(user => {
-      user.updateWinCount({...this, ...this.room});
+      user.updateWinCount({...this, ...room});
     });
 
-    this.winUsers = users.filter(({ winCount }) => winCount >=  this.room.winLine);
+    this.winUsers = users.filter(({ winCount }) => winCount >=  room.winLine);
 
     if(this.winUsers.length) {
       return this.end(this.winUsers);
@@ -45,7 +53,7 @@ export class Game {
       }))
     );
 
-    this.turnIndex = (this.turnIndex + 1) % this.room.user.length;
+    this.turnIndex = (this.turnIndex + 1) % room.user.length;
   }
 
   end() {
@@ -57,7 +65,9 @@ export class Game {
     this.turnIndex = 0;
     this.checkedList = [];
 
-    const users = this.room.user.map(UserDepartment.user.bind(UserDepartment));
+    const room = RoomDepartment.load(this.roomID);
+
+    const users = room.user.map(UserDepartment.user.bind(UserDepartment));
     users.forEach(user => {
       user.winCount = 0;
       user.matrix = randMatrix(this.room.size);

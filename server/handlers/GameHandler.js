@@ -1,6 +1,8 @@
 import UserManager from "../UserManager";
 import GameManager from '../GameManager';
-import { SocketEvent } from "../../src/const";
+import { SocketEvent } from "const";
+
+import { UserDepartment, RoomDepartment } from "class";
 
 const getLineCount = (matrix, checkedList, winStr, size) => {
   const result = checkedList
@@ -39,6 +41,17 @@ const getResponse = ({ game, checkedList }) => {
 };
 
 export const GameHandler = ({ io, socket }) => {
+  const socketID = socket.id;
+
+  /** 取得game資訊 */
+  socket.on(SocketEvent.Game.InfoReq, roomID => {
+    const room = RoomDepartment.load(roomID);
+    console.warn('game', room.game);
+    io.to(socketID).emit(
+      SocketEvent.Game.InfoRes,
+      room.game
+    );
+  });
 
   socket.on(SocketEvent.Game.CheckNum, (room, num) => {
     const game = GameManager.get(room);
@@ -52,6 +65,7 @@ export const GameHandler = ({ io, socket }) => {
     );
   });
 
+  /** @deprecated */
   socket.on(SocketEvent.Game.FetchMatrix, room => {
     const game = GameManager.get(room);
     if(!game) return;

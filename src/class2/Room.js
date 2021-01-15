@@ -9,11 +9,17 @@ export class Room {
   winLine = 5;
   user = []; // user's id list;
 
-  constructor({ name, size = 5, winLine = 5, user = [] }) {
+  constructor({ name, size = 5, winLine = 5, user = [], game, ...props }) {
     this.name = name;
     this.size = size;
     this.user = user;
     this.winLine = winLine;
+    if(game) {
+      this.game = new Game(size, this);
+    }
+    for (const key in props) {
+      this[key] = props[key];
+    }
   }
 
   existsUser(userID) {
