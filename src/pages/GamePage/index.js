@@ -102,15 +102,6 @@ export function GamePage({ socket }) {
     user.replay(roomID);
   };
 
-  // winLine = 5;
-  // plyerInfoList = [
-  //   {name: '謝', winCount: ~~(Math.random() * 6)},
-  //   {name: 'def', winCount: ~~(Math.random() * 6)},
-  // ];
-  // winList = ['sexyoung', 'kelly']; // test
-  // console.warn(Boolean(winList.length)); // test
-  // user.matrix = [...Array(25).keys()]; // test
-
   if(!user?.matrix?.length) return null;
   console.warn(user);
   const turnUser = plyerInfoList.find(({ id }) => id === turnID) || {};

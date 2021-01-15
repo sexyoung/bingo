@@ -49,16 +49,6 @@ export const RoomHandler = ({ io, socket }) => {
     if(sockets.length) {
       GameManager.updatePlayer({io, id: roomID, sockets, size: room.size});
     }
-    // io.in(roomID).emit(
-    //   SocketEvent.Room.PlayerUpdate,
-    //   room.user.map(UserDepartment.user.bind(UserDepartment)).map(({socketID, ...user}) => user),
-    // );
-
-    // [room]房裡的所有連線
-    // const sockets = [...io.sockets.adapter.rooms.get(room)];
-    // if(sockets.length) {
-    //   GameManager.updatePlayer({io, id: room, sockets});
-    // }
   });
 
   /** 取得房間資訊 */
@@ -122,24 +112,6 @@ export const RoomHandler = ({ io, socket }) => {
     RoomDepartment.load(roomID);
     const room = RoomDepartment.room(roomID);
     room.start();
-    // GameManager.build({
-    //   size,
-    //   roomID,
-    //   winLine,
-    //   sockets: [...io.sockets.adapter.rooms.get(roomID)],
-    // });
-
     io.in(roomID).emit(SocketEvent.Room.StartGame);
-  });
-
-  // 把每個人的 matrix 暫存
-  /** @deprecated */
-  socket.on(SocketEvent.Room.SaveMatrix, (room, matrix) => {
-    const game = GameManager.get(room);
-    if(!game) return;
-    const { idList } = GameManager.get(room);
-    const index = idList.findIndex(user => user.id === UserManager.get({ socketID: socket.id }).id);
-    idList[index].matrix = matrix;
-    GameManager.get(room).idList = idList;
   });
 };

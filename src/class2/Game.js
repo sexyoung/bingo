@@ -8,6 +8,7 @@ export class Game {
   constructor(size, room) {
     this.room = room;
     this.winStr = genWinStr(size);
+    this.turnIndex = ~~(room.user.length * Math.random());
   }
 
   checked(num) {
