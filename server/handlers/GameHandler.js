@@ -46,13 +46,23 @@ export const GameHandler = ({ io, socket }) => {
   /** 取得game資訊 */
   socket.on(SocketEvent.Game.InfoReq, roomID => {
     const room = RoomDepartment.load(roomID);
-    console.warn('game', room.game);
-    io.to(socketID).emit(
-      SocketEvent.Game.InfoRes,
-      room.game
-    );
+    const { game } = room;
+
+    io.to(socketID).emit(SocketEvent.Game.InfoRes, game);
+
+    /** 取得 user 資料 */
+    // 如果此時沒有獲得全部的使用者資訊就會錯誤
+    UserDepartment.loadAll();
+    const user = UserDepartment.find(socketID);
+    io.to(socketID).emit(SocketEvent.User.InfoRes, user);
+
+    /** turn */
+    console.warn(room.user, game.turnIndex);
+    const turnID = room.user[game.turnIndex];
+    io.to(socketID).emit(SocketEvent.Game.Turn, turnID);
   });
 
+  /** 待使用 */
   socket.on(SocketEvent.Game.CheckNum, (room, num) => {
     const game = GameManager.get(room);
     if(!game) return;
@@ -65,25 +75,7 @@ export const GameHandler = ({ io, socket }) => {
     );
   });
 
-  /** @deprecated */
-  socket.on(SocketEvent.Game.FetchMatrix, room => {
-    const game = GameManager.get(room);
-    if(!game) return;
-    const { checkedList = [], idList = [] } = game;
-    const user = idList.find(({ id }) => UserManager.get({ socketID: socket.id }).id === id);
-    if(!user) {
-      return console.log('===== user', idList, UserManager.all());
-    }
-    io.to(socket.id).emit(
-      SocketEvent.Game.SelfMatrix,
-      idList.find(({ id }) => UserManager.get({ socketID: socket.id }).id === id).matrix,
-      ...getResponse({
-        game,
-        checkedList,
-      }),
-    );
-  });
-
+  /** 待使用 */
   socket.on(SocketEvent.Game.RePlay, room => {
     const socketIDList = GameManager.close(room);
     socketIDList.forEach(socketID => {

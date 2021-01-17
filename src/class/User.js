@@ -20,6 +20,7 @@ export class User {
     );
   }
 
+  /** @deprecated */
   fetchMatrix(room) {
     this.socket.emit(
       SocketEvent.Game.FetchMatrix,

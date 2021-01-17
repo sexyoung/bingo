@@ -26,6 +26,7 @@ export const SocketEvent = {
     InfoRes: 'GameInfoRes',
     GoJoin: 'GameGoJoin',
     RePlay: 'GameRePlay',
+    Turn: 'GameTurn',
     CheckNum: 'GameCheckNum',
     SelfMatrix: 'GameSelfMatrix',
     FetchMatrix: 'GameFetchMatrix',
