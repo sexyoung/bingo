@@ -15,7 +15,7 @@ export class Room {
     this.user = user;
     this.winLine = winLine;
     if(game) {
-      this.game = new Game(size, this);
+      this.game = new Game(size, {...this, game});
     }
     for (const key in props) {
       this[key] = props[key];

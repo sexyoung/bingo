@@ -17,6 +17,7 @@ export const SocketHandler = ({ io, socket }) => {
 
       /** 踢出他 */
       const room = RoomDepartment.room(roomID);
+      if(!room) return;
       room.kick(user.id);
       RoomDepartment.save(roomID);
 

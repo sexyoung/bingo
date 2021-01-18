@@ -4,10 +4,12 @@ import { getRandomChar } from "utils";
 // TODO: 這邊有一些方法應集中到另一個 Class Room
 export class User {
 
+  /** @deprecated */
   countDownCancel(room) {
     this.socket.emit(SocketEvent.Room.CountDownCancel, room);
   }
 
+  /** @deprecated */
   checked(room, num) {
     if(!this.checkedList) {
       this.checkedList = [];
@@ -28,6 +30,7 @@ export class User {
     );
   }
 
+  /** @deprecated */
   replay(room) {
     this.socket.emit(
       SocketEvent.Game.RePlay,
@@ -35,6 +38,7 @@ export class User {
     );
   }
 
+  /** @deprecated */
   leave() {
     this?.socket.close();
   }

@@ -10,9 +10,9 @@ import {
 import style from './style.module.scss';
 
 let winLine = 0;
-let winList = [];
-let checkedList = [];
-let plyerInfoList = [];
+// let winList = [];
+// let checkedList = [];
+// let plyerInfoList = [];
 
 const nameColor = name => {
   const num = +name.split('').map(s => s.charCodeAt()).join('');
@@ -27,7 +27,9 @@ let isJoinReq = true;
 export function GamePage({ socket }) {
   const history = useHistory();
   const { roomID } = useParams();
-  const [game, setGame] = useState({});
+  const [winList, setWinList] = useState([]);
+  const [checkedList, setCheckedList] = useState([]);
+  const [plyerInfoList, setPlyerInfoList] = useState([]);
   const [user, setUser] = useState({});
   const [userList, setUserList] = useState([]);
   const [ turnID, setTurnID ] = useState("");
@@ -38,15 +40,14 @@ export function GamePage({ socket }) {
 
     const initial = () => {
       const UpdateChecked = (newCheckedList, newTurnID, newPlyerInfoList, newWinList = [], newWinLine) => {
-        checkedList = newCheckedList;
-        plyerInfoList = newPlyerInfoList;
-        winList = newWinList;
+        setWinList([...newWinList]);
+        setCheckedList([...newCheckedList]);
+        setPlyerInfoList([...newPlyerInfoList]);
         winLine = newWinLine;
         setTurnID(newTurnID);
       };
 
       const PlayerUpdate = socketList => {
-        console.warn('有人進來/出去囉', socketList);
         setUserList(socketList.filter(v => v));
       };
 
@@ -54,15 +55,15 @@ export function GamePage({ socket }) {
         history.push(`/${roomID}/join`);
       };
 
-      const UserUpdate = user => setUser(user);
-      const GameUpdate = game => setGame(game);
+      const UserUpdate = user => setUser({...user});
+      // const GameUpdate = game => setGame({...game});
       const GameTurn = turnID => setTurnID(turnID);
 
       // 拒絕進入，導頁
       socket.on(SocketEvent.Room.Denied, Denied);
 
       // 點擊數字
-      socket.on(SocketEvent.Game.UpdateChecked, UpdateChecked);
+      // socket.on(SocketEvent.Game.UpdateChecked, UpdateChecked);
 
       // 從伺服端取得自己的matrix
       socket.on(SocketEvent.Game.GoJoin, GoJoin);
@@ -74,14 +75,15 @@ export function GamePage({ socket }) {
       socket.on(SocketEvent.Room.PlayerUpdate, PlayerUpdate);
 
       // 取得房間的資料
-      socket.on(SocketEvent.Game.InfoRes, GameUpdate);
+      // socket.on(SocketEvent.Game.InfoRes, GameUpdate);
 
       // Turn
-      socket.on(SocketEvent.Game.Turn, GameTurn);
+      socket.on(SocketEvent.Game.Turn, UpdateChecked);
 
       // 如果使用者重整的話，會需要執行這行
       if(isJoinReq) {
         const bingoUserID = localStorage.getItem('bingoUserID') || makeID();
+        localStorage.setItem('bingoUserID', bingoUserID);
         socket.emit(SocketEvent.Room.PlayerJoin, roomID, bingoUserID );
       }
 
@@ -101,7 +103,7 @@ export function GamePage({ socket }) {
     // 導頁過來的
     if(socket.connected) {
       isJoinReq = false;
-      initial();
+      return initial();
     } else {
       // 重整的
       socket.on('connect', initial);
@@ -117,19 +119,18 @@ export function GamePage({ socket }) {
 
   const handleClick = index => {
     if (checkedList.includes(user.matrix[index])) return;
-    console.warn(roomID, user.matrix[index]);
-    // save user checked num
-    // and notice other user the number is checked
+    socket.emit(
+      SocketEvent.Game.CheckNum,
+      roomID,
+      user.matrix[index]
+    );
   };
 
   const handleReplay = () => {
-    user.replay(roomID);
+    socket.emit(SocketEvent.Game.RePlay, roomID);
   };
 
   if(!user?.matrix?.length) return null;
-  console.warn('我的資料', user);
-  console.warn('userList', userList);
-  console.warn('turnID', turnID);
 
   const turnUser = plyerInfoList.find(({ id }) => id === turnID) || {};
 
@@ -186,10 +187,10 @@ export function GamePage({ socket }) {
         }
       </div>
       <Matrix {...{
-        checkedList,
         data: user.matrix,
         onClick: handleClick,
         className: style.Matrix,
+        checkedList,
         isActive: turnID === user.id && !winList.length,
       }} />
     </div>

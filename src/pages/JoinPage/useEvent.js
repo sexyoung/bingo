@@ -10,6 +10,8 @@ import style from "./style.module.scss";
 
 let num = 0;
 
+let isJoinReq = true;
+
 /** 這邊看起來還是有點亂，想一下怎麼改 */
 export const useEvent = socket => {
   const nameDOM = createRef();
@@ -59,13 +61,12 @@ export const useEvent = socket => {
 
   useLayoutEffect(() => {
 
-    // TODO: 應該納入 Room.addUser or User.join(room)
-    // user.join(room);
-    const bingoUserID = localStorage.getItem('bingoUserID') || makeID();
-    localStorage.setItem('bingoUserID', bingoUserID);
-
-    /** 使用者加入 */
-    socket.emit( SocketEvent.Room.PlayerJoin, roomID, bingoUserID );
+    // 如果使用者重整的話，會需要執行這行
+    if(isJoinReq) {
+      const bingoUserID = localStorage.getItem('bingoUserID') || makeID();
+      localStorage.setItem('bingoUserID', bingoUserID);
+      socket.emit(SocketEvent.Room.PlayerJoin, roomID, bingoUserID);
+    }
     socket.emit( SocketEvent.Room.InfoReq, roomID );
 
     qrcode.toDataURL(
@@ -79,72 +80,87 @@ export const useEvent = socket => {
       }
     );
 
-    const UserUpdate = user => setUser(user);
-    const RoomInfoUpdate = roomInfo => setRoomInfo(roomInfo);
-    const PlayerUpdate = socketList => {
-      console.warn('socketList', socketList);
-      setUserList(socketList.filter(v => v));
+    const initial = () => {
+      const UserUpdate = user => setUser(user);
+      const RoomInfoUpdate = roomInfo => setRoomInfo(roomInfo);
+      const PlayerUpdate = socketList => {
+        console.warn('socketList', socketList);
+        setUserList(socketList.filter(v => v));
+      };
+      const MessageUpdate = message => setChatHistory(chatHistory => [ ...chatHistory, message ]);
+      const Denied = () => {
+        history.push('/denied');
+      };
+
+      const CountDown = count => {
+        setCount(count);
+      };
+
+      const CountDownStop = () => {
+        setCount(null);
+      };
+
+      const StartGame = () => {
+        history.push(`/${roomID}/game`);
+      };
+
+      // 拒絕進入，導頁
+      socket.on(SocketEvent.Room.Denied, Denied);
+
+      // 使用者清單更新
+      socket.on(SocketEvent.Room.PlayerUpdate, PlayerUpdate);
+      // socket.on(SocketEvent.Room.PlayerUpdate, PlayerUpdate);
+
+      // 取得自己的資料
+      socket.on(SocketEvent.User.InfoRes, UserUpdate);
+
+      // 取得房間的資料
+      socket.on(SocketEvent.Room.InfoRes, RoomInfoUpdate);
+
+      // 訊息更新
+      socket.on(SocketEvent.Room.MessageUpdate, MessageUpdate);
+
+      // 開始倒數遊戲！
+      socket.on(SocketEvent.Room.CountDown, CountDown);
+
+      // 取消倒數
+      socket.on(SocketEvent.Room.CountDownStop, CountDownStop);
+
+      // 倒數結束
+      socket.on(SocketEvent.Room.CountDownEnd, handleStartGame);
+
+      // 開始遊戲!
+      socket.on(SocketEvent.Room.StartGame, StartGame);
+
+      // randomMatrix();
+
+      return () => {
+        console.warn('off');
+        socket.off(SocketEvent.User.InfoRes, UserUpdate);
+        socket.off(SocketEvent.Room.InfoRes, RoomInfoUpdate);
+        socket.off(SocketEvent.Room.Denied, Denied);
+        socket.off(SocketEvent.Room.CountDown, CountDown);
+        socket.off(SocketEvent.Room.PlayerUpdate, PlayerUpdate);
+        socket.off(SocketEvent.Room.MessageUpdate, MessageUpdate);
+        socket.off(SocketEvent.Room.CountDown, CountDown);
+        socket.off(SocketEvent.Room.CountDownStop, CountDownStop);
+        socket.off(SocketEvent.Room.CountDownEnd, handleStartGame);
+        socket.off(SocketEvent.Room.StartGame, StartGame);
+      };
     };
-    const MessageUpdate = message => setChatHistory(chatHistory => [ ...chatHistory, message ]);
-    const Denied = () => {
-      history.push('/denied');
-    };
 
-    const CountDown = count => {
-      setCount(count);
-    };
+    // 導頁過來的
+    if(socket.connected) {
+      isJoinReq = false;
+      return initial();
+    } else {
+      // 重整的
+      socket.on('connect', () => {
+        console.warn(this);
+        initial();
+      });
+    }
 
-    const CountDownStop = () => {
-      setCount(null);
-    };
-
-    const StartGame = () => {
-      console.warn(StartGame);
-      history.push(`/${roomID}/game`);
-    };
-
-    // 拒絕進入，導頁
-    socket.on(SocketEvent.Room.Denied, Denied);
-
-    // 使用者清單更新
-    socket.on(SocketEvent.Room.PlayerUpdate, PlayerUpdate);
-    // socket.on(SocketEvent.Room.PlayerUpdate, PlayerUpdate);
-
-    // 取得自己的資料
-    socket.on(SocketEvent.User.InfoRes, UserUpdate);
-
-    // 取得房間的資料
-    socket.on(SocketEvent.Room.InfoRes, RoomInfoUpdate);
-
-    // 訊息更新
-    socket.on(SocketEvent.Room.MessageUpdate, MessageUpdate);
-
-    // 開始倒數遊戲！
-    socket.on(SocketEvent.Room.CountDown, CountDown);
-
-    // 取消倒數
-    socket.on(SocketEvent.Room.CountDownStop, CountDownStop);
-
-    // 倒數結束
-    socket.on(SocketEvent.Room.CountDownEnd, handleStartGame);
-
-    // 開始遊戲!
-    socket.on(SocketEvent.Room.StartGame, StartGame);
-
-    // randomMatrix();
-
-    return () => {
-      socket.off(SocketEvent.User.InfoRes, UserUpdate);
-      socket.off(SocketEvent.Room.InfoRes, RoomInfoUpdate);
-      socket.off(SocketEvent.Room.Denied, Denied);
-      socket.off(SocketEvent.Room.CountDown, CountDown);
-      socket.off(SocketEvent.Room.PlayerUpdate, PlayerUpdate);
-      socket.off(SocketEvent.Room.MessageUpdate, MessageUpdate);
-      socket.off(SocketEvent.Room.CountDown, CountDown);
-      socket.off(SocketEvent.Room.CountDownStop, CountDownStop);
-      socket.off(SocketEvent.Room.CountDownEnd, handleStartGame);
-      socket.off(SocketEvent.Room.StartGame, StartGame);
-    };
   }, []);
 
   useEffect(() => {
