@@ -15,7 +15,7 @@ class GameManager {
     return instance;
   }
 
-  updatePlayer({io, id, sockets, size}) {
+  updatePlayer({io, id, sockets}) {
     UserDepartment.loadAll();
     io.in(id).emit(
       SocketEvent.Room.PlayerUpdate,
@@ -29,6 +29,7 @@ class GameManager {
     );
   }
 
+  /** @deprecated */
   checked(room, num) {
     const checkedList = [...new Set([...GameList[room].checkedList, num])];
     checkedList.sort((a, b) => a - b);
@@ -37,6 +38,7 @@ class GameManager {
     return checkedList;
   }
 
+  /** @deprecated */
   build({size, winLine, room, sockets}) {
     const idList = sockets
       .map(socketID => UserManager.get({ socketID }))
@@ -52,6 +54,7 @@ class GameManager {
     };
   }
 
+  /** @deprecated */
   removeUser(userID) {
     // remove all user from all gameRoom
     for (const room in GameList) {
@@ -65,10 +68,12 @@ class GameManager {
     }
   }
 
+  /** @deprecated */
   get(room) {
     return GameList[room] || {};
   }
 
+  /** @deprecated */
   close(room) {
     const socketIDList = [];
     const idList = GameList[room].idList.map(({ id }) => id);

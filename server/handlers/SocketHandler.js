@@ -21,11 +21,14 @@ export const SocketHandler = ({ io, socket }) => {
       room.kick(user.id);
       RoomDepartment.save(roomID);
 
+      console.warn('socket.adapter.rooms', socket.adapter.rooms);
+
       // 該使用者的每個聊天室都要移除該使用者
       for (const Room of socket.adapter.rooms) {
         const [id, [...sockets]] = Room;
         /** 這傢伙遲早要改掉 */
-        GameManager.updatePlayer({io, id, sockets, size: room.size});
+        if(!sockets.includes(id))
+          GameManager.updatePlayer({io, id, sockets, size: room.size});
       }
     }
   });

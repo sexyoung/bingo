@@ -33,7 +33,7 @@ class UserDepartmentSingleton {
 
   load(userID) {
     if(!isExistFile('user', userID)) return;
-    this.data[userID] = new User(readFile('user', userID));
+    return this.data[userID] = new User(readFile('user', userID));
   }
 
   loadAll() {

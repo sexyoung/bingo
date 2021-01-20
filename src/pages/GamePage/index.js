@@ -10,9 +10,6 @@ import {
 import style from './style.module.scss';
 
 let winLine = 0;
-// let winList = [];
-// let checkedList = [];
-// let plyerInfoList = [];
 
 const nameColor = name => {
   const num = +name.split('').map(s => s.charCodeAt()).join('');
@@ -26,44 +23,45 @@ let isJoinReq = true;
 
 export function GamePage({ socket }) {
   const history = useHistory();
-  const { roomID } = useParams();
+  const {roomID} = useParams();
+  const [user, setUser] = useState({});
+  const [turnID, setTurnID] = useState("");
   const [winList, setWinList] = useState([]);
+  const [userList, setUserList] = useState([]);
   const [checkedList, setCheckedList] = useState([]);
   const [plyerInfoList, setPlyerInfoList] = useState([]);
-  const [user, setUser] = useState({});
-  const [userList, setUserList] = useState([]);
-  const [ turnID, setTurnID ] = useState("");
   useLayoutEffect(() => {
     const Denied = () => {
       history.push('/denied');
     };
 
+    const PlayerUpdate = socketList => {
+      setUserList(socketList.filter(v => v));
+    };
+
+    const GoJoin = () => history.push(`/${roomID}/join`);
+
+    const UserUpdate = user => setUser({...user});
+
+    const UpdateChecked = (newCheckedList, newTurnID, newPlyerInfoList, newWinList = [], newWinLine) => {
+      setWinList([...newWinList]);
+      setCheckedList([...newCheckedList]);
+      setPlyerInfoList([...newPlyerInfoList]);
+      setTurnID(newTurnID);
+      winLine = newWinLine;
+
+      /** 只要有人贏，立刻關閉監聽這事件
+       * 不然會造成導回join頁時打出此事件但本來來不及 off
+       */
+      if(newWinList.length) {
+        socket.off(SocketEvent.User.InfoRes);
+      }
+    };
+
     const initial = () => {
-      const UpdateChecked = (newCheckedList, newTurnID, newPlyerInfoList, newWinList = [], newWinLine) => {
-        setWinList([...newWinList]);
-        setCheckedList([...newCheckedList]);
-        setPlyerInfoList([...newPlyerInfoList]);
-        winLine = newWinLine;
-        setTurnID(newTurnID);
-      };
-
-      const PlayerUpdate = socketList => {
-        setUserList(socketList.filter(v => v));
-      };
-
-      const GoJoin = () => {
-        history.push(`/${roomID}/join`);
-      };
-
-      const UserUpdate = user => setUser({...user});
-      // const GameUpdate = game => setGame({...game});
-      const GameTurn = turnID => setTurnID(turnID);
 
       // 拒絕進入，導頁
       socket.on(SocketEvent.Room.Denied, Denied);
-
-      // 點擊數字
-      // socket.on(SocketEvent.Game.UpdateChecked, UpdateChecked);
 
       // 從伺服端取得自己的matrix
       socket.on(SocketEvent.Game.GoJoin, GoJoin);
@@ -74,9 +72,6 @@ export function GamePage({ socket }) {
       // 監聽玩家變化
       socket.on(SocketEvent.Room.PlayerUpdate, PlayerUpdate);
 
-      // 取得房間的資料
-      // socket.on(SocketEvent.Game.InfoRes, GameUpdate);
-
       // Turn
       socket.on(SocketEvent.Game.Turn, UpdateChecked);
 
@@ -86,28 +81,24 @@ export function GamePage({ socket }) {
         localStorage.setItem('bingoUserID', bingoUserID);
         socket.emit(SocketEvent.Room.PlayerJoin, roomID, bingoUserID );
       }
-
-      return () => {
-        socket.off(SocketEvent.Game.Turn, GameTurn);
-        socket.off(SocketEvent.Game.GoJoin, GoJoin);
-        socket.off(SocketEvent.Room.Denied, Denied);
-        socket.off(SocketEvent.User.InfoRes, UserUpdate);
-        socket.off(SocketEvent.Game.InfoRes, GameUpdate);
-        socket.off(SocketEvent.Room.PlayerUpdate, PlayerUpdate);
-        socket.off(SocketEvent.Game.UpdateChecked, UpdateChecked);
-
-        socket.off('connect', initial);
-      };
     };
 
     // 導頁過來的
     if(socket.connected) {
       isJoinReq = false;
-      return initial();
+      initial();
     } else {
-      // 重整的
       socket.on('connect', initial);
     }
+
+    return () => {
+      socket.off(SocketEvent.Game.Turn, UpdateChecked);
+      socket.off(SocketEvent.Game.GoJoin, GoJoin);
+      socket.off(SocketEvent.Room.Denied, Denied);
+      socket.off(SocketEvent.Room.PlayerUpdate, PlayerUpdate);
+
+      socket.off('connect', initial);
+    };
   }, []);
 
   useLayoutEffect(() => {

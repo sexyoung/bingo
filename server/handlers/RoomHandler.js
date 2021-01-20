@@ -39,6 +39,7 @@ export const RoomHandler = ({ io, socket }) => {
 
     socket.join(roomID);
 
+    console.warn('有人加入');
     io.to(socketID).emit(
       SocketEvent.User.InfoRes,
       user,
@@ -60,17 +61,18 @@ export const RoomHandler = ({ io, socket }) => {
     );
   });
 
-  /** 傳訊息 */
-  socket.on(SocketEvent.Room.MessageSend, (room, message) => {
-    const user = UserManager.get({ socketID });
+  /** 待處理 */
+  socket.on(SocketEvent.Room.MessageSend, (userID, roomID, message) => {
+    const user = UserDepartment.load(userID);
     if(!user) return;
-    io.to(room).emit(SocketEvent.Room.MessageUpdate, {
-      user:  UserManager.get({ socketID }),
+    if(!user) return;
+    io.to(roomID).emit(SocketEvent.Room.MessageUpdate, {
+      user,
       text: message,
     });
   });
 
-  /** 更新進度, 先等等。 */
+  /** 待處理 */
   socket.on(SocketEvent.Room.UpdateProcess, (roomID, matrix, percentage) => {
     UserDepartment.loadAll();
     const user = UserDepartment.find(socketID);
@@ -78,7 +80,7 @@ export const RoomHandler = ({ io, socket }) => {
     UserDepartment.user(user.id).matrix = matrix;
     UserDepartment.user(user.id).percentage = percentage;
     UserDepartment.save(user.id);
-    // UserManager.get({ socketID }).percentage = percentage;
+
     GameManager.updatePlayer({
       io,
       id: roomID,

@@ -10,8 +10,6 @@ import style from "./style.module.scss";
 
 let num = 0;
 
-let isJoinReq = true;
-
 /** 這邊看起來還是有點亂，想一下怎麼改 */
 export const useEvent = socket => {
   const nameDOM = createRef();
@@ -61,12 +59,13 @@ export const useEvent = socket => {
 
   useLayoutEffect(() => {
 
-    // 如果使用者重整的話，會需要執行這行
-    if(isJoinReq) {
-      const bingoUserID = localStorage.getItem('bingoUserID') || makeID();
-      localStorage.setItem('bingoUserID', bingoUserID);
-      socket.emit(SocketEvent.Room.PlayerJoin, roomID, bingoUserID);
-    }
+    const bingoUserID = localStorage.getItem('bingoUserID') || makeID();
+    localStorage.setItem('bingoUserID', bingoUserID);
+
+    // 加入
+    socket.emit(SocketEvent.Room.PlayerJoin, roomID, bingoUserID);
+
+    // 取得房間資訊
     socket.emit( SocketEvent.Room.InfoReq, roomID );
 
     qrcode.toDataURL(
@@ -80,36 +79,36 @@ export const useEvent = socket => {
       }
     );
 
+    const UserUpdate = user => setUser(user);
+    const RoomInfoUpdate = roomInfo => setRoomInfo(roomInfo);
+    const PlayerUpdate = socketList => {
+      console.warn('socketList', socketList);
+      setUserList(socketList.filter(v => v));
+    };
+    const MessageUpdate = message => setChatHistory(chatHistory => [ ...chatHistory, message ]);
+    const Denied = () => {
+      history.push('/denied');
+    };
+
+    const CountDown = count => {
+      setCount(count);
+    };
+
+    const CountDownStop = () => {
+      setCount(null);
+    };
+
+    const StartGame = () => {
+      history.push(`/${roomID}/game`);
+    };
+
     const initial = () => {
-      const UserUpdate = user => setUser(user);
-      const RoomInfoUpdate = roomInfo => setRoomInfo(roomInfo);
-      const PlayerUpdate = socketList => {
-        console.warn('socketList', socketList);
-        setUserList(socketList.filter(v => v));
-      };
-      const MessageUpdate = message => setChatHistory(chatHistory => [ ...chatHistory, message ]);
-      const Denied = () => {
-        history.push('/denied');
-      };
-
-      const CountDown = count => {
-        setCount(count);
-      };
-
-      const CountDownStop = () => {
-        setCount(null);
-      };
-
-      const StartGame = () => {
-        history.push(`/${roomID}/game`);
-      };
 
       // 拒絕進入，導頁
       socket.on(SocketEvent.Room.Denied, Denied);
 
       // 使用者清單更新
       socket.on(SocketEvent.Room.PlayerUpdate, PlayerUpdate);
-      // socket.on(SocketEvent.Room.PlayerUpdate, PlayerUpdate);
 
       // 取得自己的資料
       socket.on(SocketEvent.User.InfoRes, UserUpdate);
@@ -131,46 +130,40 @@ export const useEvent = socket => {
 
       // 開始遊戲!
       socket.on(SocketEvent.Room.StartGame, StartGame);
-
-      // randomMatrix();
-
-      return () => {
-        console.warn('off');
-        socket.off(SocketEvent.User.InfoRes, UserUpdate);
-        socket.off(SocketEvent.Room.InfoRes, RoomInfoUpdate);
-        socket.off(SocketEvent.Room.Denied, Denied);
-        socket.off(SocketEvent.Room.CountDown, CountDown);
-        socket.off(SocketEvent.Room.PlayerUpdate, PlayerUpdate);
-        socket.off(SocketEvent.Room.MessageUpdate, MessageUpdate);
-        socket.off(SocketEvent.Room.CountDown, CountDown);
-        socket.off(SocketEvent.Room.CountDownStop, CountDownStop);
-        socket.off(SocketEvent.Room.CountDownEnd, handleStartGame);
-        socket.off(SocketEvent.Room.StartGame, StartGame);
-      };
     };
 
     // 導頁過來的
     if(socket.connected) {
-      isJoinReq = false;
-      return initial();
+      initial();
     } else {
       // 重整的
-      socket.on('connect', () => {
-        console.warn(this);
-        initial();
-      });
+      socket.on('connect', initial);
     }
+
+    return () => {
+      console.warn('join off');
+      socket.off(SocketEvent.User.InfoRes, UserUpdate);
+      socket.off(SocketEvent.Room.InfoRes, RoomInfoUpdate);
+      socket.off(SocketEvent.Room.Denied, Denied);
+      socket.off(SocketEvent.Room.CountDown, CountDown);
+      socket.off(SocketEvent.Room.PlayerUpdate, PlayerUpdate);
+      socket.off(SocketEvent.Room.MessageUpdate, MessageUpdate);
+      socket.off(SocketEvent.Room.CountDown, CountDown);
+      socket.off(SocketEvent.Room.CountDownStop, CountDownStop);
+      socket.off(SocketEvent.Room.CountDownEnd, handleStartGame);
+      socket.off(SocketEvent.Room.StartGame, StartGame);
+    };
 
   }, []);
 
   useEffect(() => {
-    // console.warn('do it');
     chatHistoryDOM.current.scrollTop = chatHistoryDOM.current.scrollHeight;
   }, [chatHistory.length]);
 
   const handleSubmit = e => {
     e.preventDefault();
-    user.send(roomID, inputDOM.current.value);
+    socket.emit(SocketEvent.Room.MessageSend, user.id ,roomID, inputDOM.current.value);
+    // user.send(roomID, inputDOM.current.value);
     inputDOM.current.value = '';
     setShow('');
     // if mobile....
