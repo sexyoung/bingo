@@ -216,7 +216,7 @@ export const useEvent = socket => {
   };
 
   const handleCountDownCancel = () => {
-    user.countDownCancel(roomID);
+    socket.emit(SocketEvent.Room.CountDownCancel, roomID);
   };
 
   return {

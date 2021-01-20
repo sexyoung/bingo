@@ -1,10 +1,9 @@
 import GameManager from '../GameManager';
-import UserManager from '../UserManager';
 import { SocketEvent } from "const";
 
 import { Room, User, UserDepartment, RoomDepartment } from "class";
 
-const count = 1;
+const count = 3;
 const RoomCount = {};
 const RoomInterval = {};
 

@@ -5,11 +5,6 @@ import { getRandomChar } from "utils";
 export class User {
 
   /** @deprecated */
-  countDownCancel(room) {
-    this.socket.emit(SocketEvent.Room.CountDownCancel, room);
-  }
-
-  /** @deprecated */
   checked(room, num) {
     if(!this.checkedList) {
       this.checkedList = [];
