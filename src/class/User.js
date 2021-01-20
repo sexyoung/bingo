@@ -1,40 +1,45 @@
-import { SocketEvent } from "const";
-import { getRandomChar } from "utils";
+import { makeID } from "utils";
 
-// TODO: 這邊有一些方法應集中到另一個 Class Room
 export class User {
+  id;
+  name;
+  matrix = [];
 
-  /** @deprecated */
-  checked(room, num) {
-    if(!this.checkedList) {
-      this.checkedList = [];
+  constructor({ name = 'Player', id = makeID(), matrix = [], ...props }) {
+    this.id = id;
+    this.name = name;
+    this.matrix = matrix;
+    for (const key in props) {
+      this[key] = props[key];
     }
-    this.checkedList = [...new Set([...this.checkedList, num])].sort((a, b) => a - b);
-    this.socket.emit(
-      SocketEvent.Game.CheckNum,
-      room,
-      num
-    );
   }
 
-  /** @deprecated */
-  fetchMatrix(room) {
-    this.socket.emit(
-      SocketEvent.Game.FetchMatrix,
-      room
-    );
+  // 要通知所有房間的人
+  sendMessage(message) {
+    console.warn(message);
   }
 
-  /** @deprecated */
-  replay(room) {
-    this.socket.emit(
-      SocketEvent.Game.RePlay,
-      room,
-    );
+  // 要通知所有房間的人
+  rename(name) {
+    this.name = name;
   }
 
-  /** @deprecated */
-  leave() {
-    this?.socket.close();
+  setNum(index, num) {
+    if(this.matrix[index]) throw('duplicate');
+    this.matrix[index] = num;
+  }
+
+  clearMatrix() {
+    this.matrix = [];
+  }
+
+  updateWinCount({ checkedList, winStr, size }) {
+    const result = checkedList
+      .map(num => this.matrix.findIndex(v => v === num))
+      .reduce((result, index) =>
+        result.replace(new RegExp(`,${index},`, 'g'), ',,')
+      , winStr)
+      .match(new RegExp(`${','.repeat(size + 1)}`, 'g'));
+    this.winCount = result ? result.length: 0;
   }
 }
