@@ -75,7 +75,7 @@ export function JoinPage({ socket }) {
               isActive: true,
             }} />
             <div className={style.buttons}>
-              <button className={style.reset} onClick={event.resetMatrix} disabled>RESET</button>
+              <button className={style.reset} onClick={event.resetMatrix}>RESET</button>
               <button className={style.random} onClick={event.randomMatrix}>RANDOM</button>
             </div>
           </div>

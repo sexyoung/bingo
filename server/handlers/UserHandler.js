@@ -1,4 +1,4 @@
-import GameManager from '../GameManager';
+import { updatePlayer } from '../utils/updatePlayer';
 import { SocketEvent } from "const";
 
 import { UserDepartment } from "class";
@@ -15,7 +15,7 @@ export const UserHandler = ({ io, socket }) => {
     UserDepartment.save(user.id);
 
     /** TODO: 應該可以用 io.in 取代 */
-    GameManager.updatePlayer({
+    updatePlayer({
       io,
       id: roomID,
       sockets: [...io.sockets.adapter.rooms.get(roomID)]

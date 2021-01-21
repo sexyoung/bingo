@@ -1,4 +1,4 @@
-import GameManager from '../GameManager';
+import { updatePlayer } from '../utils/updatePlayer';
 import { SocketEvent } from "const";
 
 import { Room, User, UserDepartment, RoomDepartment } from "class";
@@ -18,9 +18,7 @@ export const RoomHandler = ({ io, socket }) => {
 
     /** 如果使用者在該房間的話就不允許同id的使用者進來 */
     if(room.existsUser(userID)) {
-      return io.to(socketID).emit(
-        SocketEvent.Room.Denied
-      );
+      return io.to(socketID).emit(SocketEvent.Room.Denied);
     }
 
     /** 把每個使用者的資料調出來 */
@@ -38,16 +36,13 @@ export const RoomHandler = ({ io, socket }) => {
 
     socket.join(roomID);
 
-    console.warn('有人加入');
-    io.to(socketID).emit(
-      SocketEvent.User.InfoRes,
-      user,
-    );
+    // console.warn('有人加入');
+    io.to(socketID).emit(SocketEvent.User.InfoRes, user);
 
     /** TODO: 應該可以用 io.in 取代 */
     const sockets = [...io.sockets.adapter.rooms.get(roomID)];
     if(sockets.length) {
-      GameManager.updatePlayer({io, id: roomID, sockets, size: room.size});
+      updatePlayer({io, id: roomID, sockets, size: room.size});
     }
   });
 
@@ -80,7 +75,11 @@ export const RoomHandler = ({ io, socket }) => {
     UserDepartment.user(user.id).percentage = percentage;
     UserDepartment.save(user.id);
 
-    GameManager.updatePlayer({
+    io.to(socketID).emit(SocketEvent.User.InfoRes,
+      UserDepartment.user(user.id),
+    );
+
+    updatePlayer({
       io,
       id: roomID,
       sockets: [...io.sockets.adapter.rooms.get(roomID)]

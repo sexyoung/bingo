@@ -1,5 +1,5 @@
 import { UserDepartment, RoomDepartment } from "class";
-import GameManager from '../GameManager';
+import { updatePlayer } from '../utils/updatePlayer';
 
 export const SocketHandler = ({ io, socket }) => {
   const socketID = socket.id;
@@ -28,7 +28,7 @@ export const SocketHandler = ({ io, socket }) => {
         const [id, [...sockets]] = Room;
         /** 這傢伙遲早要改掉 */
         if(!sockets.includes(id))
-          GameManager.updatePlayer({io, id, sockets, size: room.size});
+          updatePlayer({io, id, sockets, size: room.size});
       }
     }
   });
