@@ -17,9 +17,9 @@ export const RoomHandler = ({ io, socket }) => {
     const room = RoomDepartment.room(roomID) ?? RoomDepartment.new(new Room({ name: roomName}));
 
     /** 如果使用者在該房間的話就不允許同id的使用者進來 */
-    if(room.existsUser(userID)) {
-      return io.to(socketID).emit(SocketEvent.Room.Denied);
-    }
+    // if(room.existsUser(userID)) {
+    //   return io.to(socketID).emit(SocketEvent.Room.Denied);
+    // }
 
     /** 把每個使用者的資料調出來 */
     room.user.forEach(UserDepartment.load.bind(UserDepartment));
@@ -55,7 +55,6 @@ export const RoomHandler = ({ io, socket }) => {
     );
   });
 
-  /** 待處理 */
   socket.on(SocketEvent.Room.MessageSend, (userID, roomID, message) => {
     const user = UserDepartment.load(userID);
     if(!user) return;
@@ -66,7 +65,6 @@ export const RoomHandler = ({ io, socket }) => {
     });
   });
 
-  /** 待處理 */
   socket.on(SocketEvent.Room.UpdateProcess, (roomID, matrix, percentage) => {
     UserDepartment.loadAll();
     const user = UserDepartment.find(socketID);

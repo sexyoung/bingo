@@ -87,7 +87,7 @@ export const useEvent = socket => {
     };
     const MessageUpdate = message => setChatHistory(chatHistory => [ ...chatHistory, message ]);
     const Denied = () => {
-      // history.push('/denied');
+      history.push('/denied');
     };
 
     const CountDown = count => {
