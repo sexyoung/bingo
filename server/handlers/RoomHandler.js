@@ -3,7 +3,7 @@ import { SocketEvent } from "const";
 
 import { Room, User, UserDepartment, RoomDepartment } from "class";
 
-const count = 3;
+const count = 1;
 const RoomCount = {};
 const RoomInterval = {};
 

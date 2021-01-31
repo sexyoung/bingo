@@ -19,8 +19,8 @@ const app = express();
 const server = http.createServer(app);
 
 const corsOption = {
-  origin: 'https://sexyoung.github.io',
-  // origin: '*',
+  // origin: 'https://sexyoung.github.io',
+  origin: '*',
 };
 
 const io = socketIO(server, {

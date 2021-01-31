@@ -11,37 +11,37 @@ const getLineCount = (matrix, checkedList, winStr, size) => {
   return result ? result.length: 0;
 };
 
+export function getGameInfo(room) {
+  const winCountList = room.user.map(id => {
+    const user = UserDepartment.user(id);
+    return {
+      id: user.id,
+      name: user.name,
+      winCount: getLineCount(
+        user.matrix,
+        room.game.checkedList,
+        room.game.winStr,
+        room.size,
+      )
+    };
+  });
+  const winList = winCountList
+    .filter(user => user.winCount >= room.winLine )
+    .map(({ name }) => name);
+
+  room.game.winUsers = winList;
+
+  return [
+    room.game.checkedList,
+    room.user[room.game.turnIndex],
+    winCountList,
+    room.game.winUsers,
+    room.winLine,
+  ];
+}
+
 export const GameHandler = ({ io, socket }) => {
   const socketID = socket.id;
-
-  function getGameInfo(room) {
-    const winCountList = room.user.map(id => {
-      const user = UserDepartment.user(id);
-      return {
-        id: user.id,
-        name: user.name,
-        winCount: getLineCount(
-          user.matrix,
-          room.game.checkedList,
-          room.game.winStr,
-          room.size,
-        )
-      };
-    });
-    const winList = winCountList
-      .filter(user => user.winCount >= room.winLine )
-      .map(({ name }) => name);
-
-    room.game.winUsers = winList;
-
-    return [
-      room.game.checkedList,
-      room.user[room.game.turnIndex],
-      winCountList,
-      room.game.winUsers,
-      room.winLine,
-    ];
-  }
 
   /** 取得game資訊 */
   socket.on(SocketEvent.Game.InfoReq, roomID => {

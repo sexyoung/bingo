@@ -1,10 +1,12 @@
+import { SocketEvent } from "const";
 import { UserDepartment, RoomDepartment } from "class";
 import { updatePlayer } from '../utils/updatePlayer';
+import { getGameInfo } from './GameHandler';
 
 export const SocketHandler = ({ io, socket }) => {
   const socketID = socket.id;
   socket.on('disconnect', reson => {
-    console.log(`==== ${reson} ====\n`, reson, socket.id);
+    console.log(`==== ${reson} ====\n`, reson, socketID);
     UserDepartment.loadAll();
 
     const user = UserDepartment.find(socketID);
@@ -15,9 +17,26 @@ export const SocketHandler = ({ io, socket }) => {
         return RoomDepartment.data[roomID].user.includes(user.id);
       });
 
-      /** 踢出他 */
+      /** 找房 */
       const room = RoomDepartment.room(roomID);
       if(!room) return;
+
+      /** 如果已開始遊戲，要檢查在房人數，turnIndex可能會變 */
+      if(room.game) {
+        const leaveUserIndex = room.user.indexOf(user.id);
+        if(leaveUserIndex < room.game.turnIndex) {
+          room.game.turnIndex -= 1;
+        } else if(leaveUserIndex === room.user.length - 1) {
+          room.game.turnIndex = 0;
+        }
+
+        io.in(roomID).emit(
+          SocketEvent.Game.Turn,
+          ...getGameInfo(room)
+        );
+      }
+
+      /** 踢出他 */
       room.kick(user.id);
       RoomDepartment.save(roomID);
 
