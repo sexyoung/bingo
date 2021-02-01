@@ -29,18 +29,22 @@ export const SocketHandler = ({ io, socket }) => {
         } else if(leaveUserIndex === room.user.length - 1) {
           room.game.turnIndex = 0;
         }
+      }
 
+      /** 踢出他 */
+      room.kick(user.id);
+
+      /** 踢出後再emit turn */
+      if(room.game) {
         io.in(roomID).emit(
           SocketEvent.Game.Turn,
           ...getGameInfo(room)
         );
       }
 
-      /** 踢出他 */
-      room.kick(user.id);
       RoomDepartment.save(roomID);
 
-      console.warn('socket.adapter.rooms', socket.adapter.rooms);
+      // console.warn('socket.adapter.rooms', socket.adapter.rooms);
 
       // 該使用者的每個聊天室都要移除該使用者
       for (const Room of socket.adapter.rooms) {
