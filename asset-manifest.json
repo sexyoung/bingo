@@ -1,23 +1,23 @@
 {
   "files": {
     "main.css": "/bingo/static/css/main.ffeeab22.chunk.css",
-    "main.js": "/bingo/static/js/main.70a46f28.chunk.js",
-    "main.js.map": "/bingo/static/js/main.70a46f28.chunk.js.map",
+    "main.js": "/bingo/static/js/main.e68775b7.chunk.js",
+    "main.js.map": "/bingo/static/js/main.e68775b7.chunk.js.map",
     "runtime-main.js": "/bingo/static/js/runtime-main.833986b5.js",
     "runtime-main.js.map": "/bingo/static/js/runtime-main.833986b5.js.map",
-    "static/js/2.6beca930.chunk.js": "/bingo/static/js/2.6beca930.chunk.js",
-    "static/js/2.6beca930.chunk.js.map": "/bingo/static/js/2.6beca930.chunk.js.map",
+    "static/js/2.de930ad9.chunk.js": "/bingo/static/js/2.de930ad9.chunk.js",
+    "static/js/2.de930ad9.chunk.js.map": "/bingo/static/js/2.de930ad9.chunk.js.map",
     "static/js/3.396d844a.chunk.js": "/bingo/static/js/3.396d844a.chunk.js",
     "static/js/3.396d844a.chunk.js.map": "/bingo/static/js/3.396d844a.chunk.js.map",
     "index.html": "/bingo/index.html",
     "static/css/main.ffeeab22.chunk.css.map": "/bingo/static/css/main.ffeeab22.chunk.css.map",
-    "static/js/2.6beca930.chunk.js.LICENSE.txt": "/bingo/static/js/2.6beca930.chunk.js.LICENSE.txt",
+    "static/js/2.de930ad9.chunk.js.LICENSE.txt": "/bingo/static/js/2.de930ad9.chunk.js.LICENSE.txt",
     "static/media/style.module.scss": "/bingo/static/media/send.a76443e2.svg"
   },
   "entrypoints": [
     "static/js/runtime-main.833986b5.js",
-    "static/js/2.6beca930.chunk.js",
+    "static/js/2.de930ad9.chunk.js",
     "static/css/main.ffeeab22.chunk.css",
-    "static/js/main.70a46f28.chunk.js"
+    "static/js/main.e68775b7.chunk.js"
   ]
 }
