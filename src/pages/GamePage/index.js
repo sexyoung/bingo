@@ -3,6 +3,7 @@ import { Matrix } from "components";
 import { useLayoutEffect, useState } from "react";
 import {
   Link,
+  Redirect,
   useParams,
   useHistory,
 } from "react-router-dom";
@@ -19,9 +20,11 @@ const nameColor = name => {
   return `rgba(${r}, ${g}, ${b}, .45)`;
 };
 
-let isJoinReq = true;
-
 export function GamePage({ socket }) {
+  /** 不允許中途加入 */
+  if(!socket.connected) {
+    return <Redirect to="/denied" />;
+  }
   const history = useHistory();
   const {roomID} = useParams();
   const [user, setUser] = useState({});
@@ -58,46 +61,26 @@ export function GamePage({ socket }) {
       }
     };
 
-    const initial = () => {
+    // 拒絕進入，導頁
+    socket.on(SocketEvent.Room.Denied, Denied);
 
-      // 拒絕進入，導頁
-      socket.on(SocketEvent.Room.Denied, Denied);
+    // 從伺服端取得自己的matrix
+    socket.on(SocketEvent.Game.GoJoin, GoJoin);
 
-      // 從伺服端取得自己的matrix
-      socket.on(SocketEvent.Game.GoJoin, GoJoin);
+    // 取得自己的資料
+    socket.on(SocketEvent.User.InfoRes, UserUpdate);
 
-      // 取得自己的資料
-      socket.on(SocketEvent.User.InfoRes, UserUpdate);
+    // 監聽玩家變化
+    socket.on(SocketEvent.Room.PlayerUpdate, PlayerUpdate);
 
-      // 監聽玩家變化
-      socket.on(SocketEvent.Room.PlayerUpdate, PlayerUpdate);
-
-      // Turn
-      socket.on(SocketEvent.Game.Turn, UpdateChecked);
-
-      // 如果使用者重整的話，會需要執行這行
-      if(isJoinReq) {
-        const bingoUserID = localStorage.getItem('bingoUserID') || makeID();
-        localStorage.setItem('bingoUserID', bingoUserID);
-        socket.emit(SocketEvent.Room.PlayerJoin, roomID, bingoUserID );
-      }
-    };
-
-    // 導頁過來的
-    if(socket.connected) {
-      isJoinReq = false;
-      initial();
-    } else {
-      socket.on('connect', initial);
-    }
+    // Turn
+    socket.on(SocketEvent.Game.Turn, UpdateChecked);
 
     return () => {
       socket.off(SocketEvent.Game.Turn, UpdateChecked);
       socket.off(SocketEvent.Game.GoJoin, GoJoin);
       socket.off(SocketEvent.Room.Denied, Denied);
       socket.off(SocketEvent.Room.PlayerUpdate, PlayerUpdate);
-
-      socket.off('connect', initial);
     };
   }, []);
 

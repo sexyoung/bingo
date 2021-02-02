@@ -1,5 +1,5 @@
 import cx from 'classnames';
-import { useParams } from "react-router-dom";
+import { useParams, Redirect } from "react-router-dom";
 import { Matrix } from "components";
 import { useEvent } from './useEvent';
 
@@ -8,10 +8,15 @@ import style from "./style.module.scss";
 export function JoinPage({ socket }) {
   const {
     NameDOM,
+    roomInfo,
     InputDOM,
     ChatHistoryDOM,
     ...event
   } = useEvent(socket);
+
+  if(roomInfo?.game) {
+    return <Redirect to="/denied" />;
+  }
 
   const { room } = useParams();
 
