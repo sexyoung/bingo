@@ -4,7 +4,7 @@ import { useParams, useHistory } from "react-router-dom";
 import { useLayoutEffect, createRef, useState, useEffect } from "react";
 
 import { makeID } from "utils";
-import { SocketEvent } from "const";
+import { SocketEvent } from "domain/const";
 
 import style from "./style.module.scss";
 

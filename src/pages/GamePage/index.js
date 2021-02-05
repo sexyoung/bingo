@@ -1,4 +1,4 @@
-import { SocketEvent } from "const";
+import { SocketEvent } from "domain/const";
 import { Matrix } from "components";
 import { useLayoutEffect, useState } from "react";
 import {
