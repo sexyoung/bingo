@@ -6,7 +6,6 @@ import { useEffect, useMemo } from "react";
 import socketIOClient from "socket.io-client";
 import { useRouteMatch } from "react-router-dom";
 
-// import { User } from "class";
 import * as Page from "pages";
 
 import style from './style.module.scss';
