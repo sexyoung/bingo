@@ -1,4 +1,5 @@
 import cx from "classnames";
+import { useState, useEffect } from 'react';
 
 import style from './style.module.scss';
 
@@ -10,9 +11,18 @@ export function Matrix({
   checkedList = [],
 }) {
 
+  const [index, setIndex] = useState(-1);
+
   const handleClick = index => {
-    isActive && onClick(index);
+    if(isActive) {
+      onClick(index);
+      setIndex(index);
+    }
   };
+
+  useEffect(() => {
+    setIndex(-1);
+  }, [checkedList]);
 
   return (
     <div className={cx(style.BingoMatrix, {
@@ -23,6 +33,7 @@ export function Matrix({
         <div
           key={i}
           className={cx(style.box, {
+            [style.ing]: index === i,
             [style.checked]: checkedList.includes(data[i])
           })}
           onClick={handleClick.bind(this, i)}
