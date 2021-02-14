@@ -57,7 +57,7 @@ export function GamePage({ socket }) {
        * 不然會造成導回join頁時打出此事件但本來來不及 off
        */
       if(newWinList.length) {
-        socket.off(SocketEvent.User.InfoRes);
+        socket.off(SocketEvent.User.ResUser);
       }
     };
 
@@ -68,7 +68,7 @@ export function GamePage({ socket }) {
     socket.on(SocketEvent.Game.GoJoin, GoJoin);
 
     // 取得自己的資料
-    socket.on(SocketEvent.User.InfoRes, UserUpdate);
+    socket.on(SocketEvent.User.ResUser, UserUpdate);
 
     // 監聽玩家變化
     socket.on(SocketEvent.Room.PlayerUpdate, PlayerUpdate);
@@ -87,7 +87,7 @@ export function GamePage({ socket }) {
   useLayoutEffect(() => {
     if(!userList.length) {
       // 取得遊戲資料
-      socket.emit(SocketEvent.Game.InfoReq, roomID);
+      socket.emit(SocketEvent.Game.ReqGame, roomID);
     }
   }, [userList.length]);
 

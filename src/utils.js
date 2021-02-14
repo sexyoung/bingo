@@ -4,6 +4,18 @@ export const mobileCheck = () => {
   return check;
 };
 
+export const handleCopyLink = () => {
+  const dummy = document.createElement('input');
+  const text = window.location.href;
+
+  document.body.appendChild(dummy);
+  dummy.value = text;
+  dummy.select();
+  document.execCommand('copy');
+  document.body.removeChild(dummy);
+  alert('Copied!');
+};
+
 const RandChar = [
   ...[...Array(10).keys()].map(v => v + 48),
   ...[...Array(26).keys()].map(v => v + 65)

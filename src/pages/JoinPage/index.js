@@ -6,7 +6,7 @@ import { useLayoutEffect, createRef, useState, useEffect } from "react";
 import { Matrix } from "components";
 
 import { useUser } from "hooks/useUser";
-import { makeID, mobileCheck } from "utils";
+import { makeID, mobileCheck, handleCopyLink } from "utils";
 import { SocketEvent } from "domain/const";
 
 import { Header } from "./components/Header";
@@ -50,7 +50,7 @@ export function JoinPage({ socket }) {
     updateProcess(updateMatrix);
   };
 
-  const handleStartGame = () => {
+  const CountDownEnd = () => {
     socket.emit(SocketEvent.Room.TriggerStartGame, roomID);
   };
 
@@ -63,7 +63,7 @@ export function JoinPage({ socket }) {
     socket.emit(SocketEvent.Room.PlayerJoin, roomID, bingoUserID);
 
     // 取得房間資訊
-    socket.emit( SocketEvent.Room.InfoReq, roomID );
+    socket.emit(SocketEvent.Room.ReqRoom, roomID );
 
     qrcode.toDataURL(
       `${location.origin + location.pathname}/#/${roomID}/join`.replace('bingo//', 'bingo/'), {
@@ -107,10 +107,10 @@ export function JoinPage({ socket }) {
       socket.on(SocketEvent.Room.PlayerUpdate, PlayerUpdate);
 
       // 取得自己的資料
-      socket.on(SocketEvent.User.InfoRes, setUser);
+      socket.on(SocketEvent.User.ResUser, setUser);
 
       // 取得房間的資料
-      socket.on(SocketEvent.Room.InfoRes, RoomInfoUpdate);
+      socket.on(SocketEvent.Room.ResRoom, RoomInfoUpdate);
 
       // 訊息更新
       socket.on(SocketEvent.Room.MessageUpdate, MessageUpdate);
@@ -122,7 +122,7 @@ export function JoinPage({ socket }) {
       socket.on(SocketEvent.Room.CountDownStop, CountDownStop);
 
       // 倒數結束
-      socket.on(SocketEvent.Room.CountDownEnd, handleStartGame);
+      socket.on(SocketEvent.Room.CountDownEnd, CountDownEnd);
 
       // 開始遊戲!
       socket.on(SocketEvent.Room.StartGame, StartGame);
@@ -137,15 +137,15 @@ export function JoinPage({ socket }) {
     }
 
     return () => {
-      socket.off(SocketEvent.User.InfoRes, setUser);
-      socket.off(SocketEvent.Room.InfoRes, RoomInfoUpdate);
+      socket.off(SocketEvent.User.ResUser, setUser);
+      socket.off(SocketEvent.Room.ResRoom, RoomInfoUpdate);
       socket.off(SocketEvent.Room.Denied, Denied);
       socket.off(SocketEvent.Room.CountDown, CountDown);
       socket.off(SocketEvent.Room.PlayerUpdate, PlayerUpdate);
       socket.off(SocketEvent.Room.MessageUpdate, MessageUpdate);
       socket.off(SocketEvent.Room.CountDown, CountDown);
       socket.off(SocketEvent.Room.CountDownStop, CountDownStop);
-      socket.off(SocketEvent.Room.CountDownEnd, handleStartGame);
+      socket.off(SocketEvent.Room.CountDownEnd, CountDownEnd);
       socket.off(SocketEvent.Room.StartGame, StartGame);
     };
 
@@ -190,18 +190,6 @@ export function JoinPage({ socket }) {
     if(user.matrix[index]) return;
     user.matrix[index] = user.matrix.filter(v => v).length + 1;
     updateProcess(user.matrix);
-  };
-
-  const handleCopyLink = () => {
-    const dummy = document.createElement('input');
-    const text = window.location.href;
-
-    document.body.appendChild(dummy);
-    dummy.value = text;
-    dummy.select();
-    document.execCommand('copy');
-    document.body.removeChild(dummy);
-    alert('Copied!');
   };
 
   const handleCountDownCancel = () => {
