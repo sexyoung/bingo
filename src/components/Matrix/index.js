@@ -24,6 +24,14 @@ export function Matrix({
     setIndex(-1);
   }, [checkedList]);
 
+  // console.warn('matrix render', JSON.stringify({
+  //   data,
+  //   onClick,
+  //   isActive,
+  //   className,
+  //   checkedList,
+  // }));
+
   return (
     <div className={cx(style.BingoMatrix, {
       [style.active]: isActive,
