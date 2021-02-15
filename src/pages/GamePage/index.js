@@ -34,13 +34,10 @@ export function GamePage({ socket }) {
   const [checkedList, setCheckedList] = useState([]);
   const [plyerInfoList, setPlyerInfoList] = useState([]);
   useLayoutEffect(() => {
-    const Denied = () => {
-      history.push('/denied');
-    };
 
-    const PlayerUpdate = socketList => {
-      setUserList(socketList.filter(v => v));
-    };
+    /** 這2個應該是共用的 */
+    const Denied = () => history.push('/denied');
+    const PlayerUpdate = socketList => setUserList(socketList.filter(v => v));
 
     const GoJoin = () => history.push(`/${roomID}/join`);
 

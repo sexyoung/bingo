@@ -1,21 +1,29 @@
 import cx from 'classnames';
 import qrcode from 'qrcode';
-import { useParams, useHistory, Redirect } from "react-router-dom";
+import { useParams, Redirect } from "react-router-dom";
 import { useLayoutEffect, createRef, useState, useEffect } from "react";
 
 import { Matrix } from "components";
+import { useEvent } from "hooks/useEvent";
 
-import { useUser } from "hooks/useUser";
-import { makeID, mobileCheck, handleCopyLink } from "utils";
 import { SocketEvent } from "domain/const";
+import { makeID, mobileCheck, handleCopyLink } from "utils";
 
 import { Header } from "./components/Header";
 
 import style from "./style.module.scss";
 
 export function JoinPage({ socket }) {
-  const history = useHistory();
   const { roomID } = useParams();
+  const {
+    on,
+    off,
+    user,
+    count,
+    rename,
+    userList,
+    chatHistory,
+  } = useEvent({socket, roomID});
 
   const nameDOM = createRef();
   const inputDOM = createRef();
@@ -23,15 +31,9 @@ export function JoinPage({ socket }) {
 
   const [size, setSize] = useState(5);
   const [show, setShow] = useState("");
-  const [count, setCount] = useState(null);
 
-  const [roomInfo, setRoomInfo] = useState({});
-  const [userList, setUserList] = useState([]);
+  const [roomInfo, ResRoom] = useState({});
   const [qrcode64, setQRCode64] = useState(null);
-  const [chatHistory, setChatHistory] = useState([]);
-
-  const { user, setUser, rename } = useUser();
-  console.warn(user);
 
   const updateProcess = matrix => {
     socket.emit(
@@ -48,10 +50,6 @@ export function JoinPage({ socket }) {
       .sort(() => .5 - Math.random());
     /** 這邊是不是有更好的寫法? */
     updateProcess(updateMatrix);
-  };
-
-  const CountDownEnd = () => {
-    socket.emit(SocketEvent.Room.TriggerStartGame, roomID);
   };
 
   useLayoutEffect(() => {
@@ -76,56 +74,22 @@ export function JoinPage({ socket }) {
       }
     );
 
-    // const UserUpdate = user => setUser(user);
-    const RoomInfoUpdate = roomInfo => setRoomInfo(roomInfo);
-    const PlayerUpdate = socketList => {
-      setUserList(socketList.filter(v => v));
-    };
-    const MessageUpdate = message => setChatHistory(chatHistory => [ ...chatHistory, message ]);
-    const Denied = () => {
-      history.push('/denied');
-    };
-
-    const CountDown = count => {
-      setCount(count);
-    };
-
-    const CountDownStop = () => {
-      setCount(null);
-    };
-
-    const StartGame = () => {
-      history.push(`/${roomID}/game`);
-    };
-
     const initial = () => {
-
-      // 拒絕進入，導頁
-      socket.on(SocketEvent.Room.Denied, Denied);
-
-      // 使用者清單更新
-      socket.on(SocketEvent.Room.PlayerUpdate, PlayerUpdate);
-
-      // 取得自己的資料
-      socket.on(SocketEvent.User.ResUser, setUser);
-
-      // 取得房間的資料
-      socket.on(SocketEvent.Room.ResRoom, RoomInfoUpdate);
-
-      // 訊息更新
-      socket.on(SocketEvent.Room.MessageUpdate, MessageUpdate);
-
-      // 開始倒數遊戲！
-      socket.on(SocketEvent.Room.CountDown, CountDown);
-
-      // 取消倒數
-      socket.on(SocketEvent.Room.CountDownStop, CountDownStop);
-
-      // 倒數結束
-      socket.on(SocketEvent.Room.CountDownEnd, CountDownEnd);
-
-      // 開始遊戲!
-      socket.on(SocketEvent.Room.StartGame, StartGame);
+      on({
+        Room: [
+          "Denied", // 拒絕進入，導頁
+          "PlayerUpdate", // 使用者清單更新
+          "ResRoom", // 取得房間的資料
+          "MessageUpdate", // 訊息更新
+          "CountDown", // 開始倒數遊戲！
+          "CountDownStop", // 取消倒數
+          "CountDownEnd", // 倒數結束
+          "StartGame", // 開始遊戲!
+        ],
+        User: [
+          "ResUser", // 取得自己的資料
+        ]
+      });
     };
 
     // 導頁過來的
@@ -137,16 +101,7 @@ export function JoinPage({ socket }) {
     }
 
     return () => {
-      socket.off(SocketEvent.User.ResUser, setUser);
-      socket.off(SocketEvent.Room.ResRoom, RoomInfoUpdate);
-      socket.off(SocketEvent.Room.Denied, Denied);
-      socket.off(SocketEvent.Room.CountDown, CountDown);
-      socket.off(SocketEvent.Room.PlayerUpdate, PlayerUpdate);
-      socket.off(SocketEvent.Room.MessageUpdate, MessageUpdate);
-      socket.off(SocketEvent.Room.CountDown, CountDown);
-      socket.off(SocketEvent.Room.CountDownStop, CountDownStop);
-      socket.off(SocketEvent.Room.CountDownEnd, CountDownEnd);
-      socket.off(SocketEvent.Room.StartGame, StartGame);
+      off();
     };
 
   }, []);
