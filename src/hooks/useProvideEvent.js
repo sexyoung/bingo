@@ -2,31 +2,33 @@ import { useState } from "react";
 import { useHistory } from "react-router-dom";
 
 import { useUser } from "hooks/useUser";
+import { useCount } from "hooks/useCount";
 import { SocketEvent } from "domain/const";
 
 export const useProvideEvent = ({ socket, roomID }) => {
   const history = useHistory();
-  const [count, setCount] = useState(null);
+  const [show, setShow] = useState("");
+  const {setCount} = useCount();
   const [roomInfo, ResRoom] = useState({});
   const [userList, setUserList] = useState([]);
   const [chatHistory, setChatHistory] = useState([]);
-  const { user, setUser: ResUser, rename } = useUser();
+  const {setUser: ResUser} = useUser();
 
+  /** common */
   const Denied = () => history.push('/denied');
   const PlayerUpdate = socketList => setUserList(socketList.filter(v => v));
   const MessageUpdate = message => setChatHistory(chatHistory => [ ...chatHistory, message ]);
 
+  // JoinPage(socket)
   const CountDown = setCount;
   const CountDownStop = () => setCount(null);
   const CountDownEnd = () => socket.emit(SocketEvent.Room.TriggerStartGame, roomID);
-  const StartGame = () => history.push(`/${roomID}/game`);
+  const StartGame = () => {
+    setCount(null);
+    history.push(`/${roomID}/game`);
+  };
 
   return {
-    user,
-    count,
-    userList,
-    chatHistory,
-
     // common(socket)
     Denied,
     ResUser,
@@ -40,7 +42,13 @@ export const useProvideEvent = ({ socket, roomID }) => {
     CountDownEnd,
     StartGame,
 
-    rename,
+    // JoinPage
+    show,
+    // count,
+    roomInfo,
+    userList,
+    chatHistory,
+    setShow
 
   };
 };

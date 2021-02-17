@@ -4,6 +4,8 @@ import { useParams, Redirect } from "react-router-dom";
 import { useLayoutEffect, createRef, useState, useEffect } from "react";
 
 import { Matrix } from "components";
+import { useUser } from "hooks/useUser";
+import { useCount } from "hooks/useCount";
 import { useEvent } from "hooks/useEvent";
 
 import { SocketEvent } from "domain/const";
@@ -15,12 +17,17 @@ import style from "./style.module.scss";
 
 export function JoinPage({ socket }) {
   const { roomID } = useParams();
+  const { user, rename } = useUser();
+  const { count } = useCount();
   const {
     on,
     off,
-    user,
-    count,
-    rename,
+    show,
+    // user,
+    // count,
+    // rename,
+    setShow,
+    roomInfo,
     userList,
     chatHistory,
   } = useEvent({socket, roomID});
@@ -28,11 +35,7 @@ export function JoinPage({ socket }) {
   const nameDOM = createRef();
   const inputDOM = createRef();
   const chatHistoryDOM = createRef([]);
-
   const [size, setSize] = useState(5);
-  const [show, setShow] = useState("");
-
-  const [roomInfo, ResRoom] = useState({});
   const [qrcode64, setQRCode64] = useState(null);
 
   const updateProcess = matrix => {
@@ -92,17 +95,13 @@ export function JoinPage({ socket }) {
       });
     };
 
-    // 導頁過來的
     if(socket.connected) {
-      initial();
+      initial(); // 導頁過來的
     } else {
-      // 重整的
-      socket.on('connect', initial);
+      socket.on('connect', initial); // 重整的
     }
 
-    return () => {
-      off();
-    };
+    return () => off();
 
   }, []);
 
@@ -157,8 +156,8 @@ export function JoinPage({ socket }) {
 
   return (
     <div className={style.JoinPage}>
-      <Header />
-      <div className={style.header}>
+      <Header {...{toggleShow, userList, user}} />
+      {/* <div className={style.header}>
         <div className={style.qrcode} onClick={toggleShow.bind(this, 'qrcode')} />
         <div className={style.playerCount} onClick={toggleShow.bind(this, 'player')}>
           {userList.length} Player
@@ -168,7 +167,7 @@ export function JoinPage({ socket }) {
           {user.name}
         </div>
         <div className={style.matrix} onClick={toggleShow.bind(this, 'editor')}/>
-      </div>
+      </div> */}
 
       <div className={style.content}>
         <div className={cx([style.chatPane], {

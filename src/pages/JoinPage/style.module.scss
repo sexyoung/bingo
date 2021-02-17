@@ -6,32 +6,6 @@
 }
 
 .JoinPage {
-
-  .header {
-    padding: 10px;
-    display: flex;
-    > * {
-      display: flex;
-      align-items: center;
-    }
-    .qrcode {
-      @include svg;
-      margin-right: 10px;
-      background-image: url(./images/qrcode.svg);
-    }
-    .fit {
-      flex: 1;
-    }
-    .playerCount, .userName {
-      text-decoration: underline;
-    }
-    .matrix {
-      @include svg;
-      margin-left: 10px;
-      background-image: url(./images/matrix.svg);
-    }
-  }
-
   .content {
     top: 50px;
     width: 100%;

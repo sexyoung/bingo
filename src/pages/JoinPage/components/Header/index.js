@@ -1,16 +1,17 @@
-export const Header = () => {
+import style from "./style.module.scss";
+
+export const Header = ({ toggleShow, userList, user }) => {
   return (
-    <div>Header</div>
-    // <div className={style.header}>
-    //   <div className={style.qrcode} onClick={event.toggleShow.bind(this, 'qrcode')} />
-    //   <div className={style.playerCount} onClick={event.toggleShow.bind(this, 'player')}>
-    //     {event.userList.length} Player
-    //   </div>
-    //   <div className={style.fit} />
-    //   <div className={style.userName} onClick={event.toggleShow.bind(this, 'rename')}>
-    //     {event.user.name}
-    //   </div>
-    //   <div className={style.matrix} onClick={event.toggleShow.bind(this, 'editor')}/>
-    // </div>
+    <div className={style.header}>
+      <div className={style.qrcode} onClick={toggleShow.bind(this, 'qrcode')} />
+      <div className={style.playerCount} onClick={toggleShow.bind(this, 'player')}>
+        {userList.length} Player
+      </div>
+      <div className={style.fit} />
+      <div className={style.userName} onClick={toggleShow.bind(this, 'rename')}>
+        {user.name}
+      </div>
+      <div className={style.matrix} onClick={toggleShow.bind(this, 'editor')}/>
+    </div>
   );
 };
